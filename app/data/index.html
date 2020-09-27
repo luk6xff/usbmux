@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html charset="UTF-8">
+  <head>
+    <meta name="viewport">
+    <!--script(src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js')-->
+    <script src="js/jquery.min.js"></script>
+    <!--script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js')-->
+    <script src="js/bootstrap.min.js"></script>
+    <!--script(src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.js")-->
+    <script src="js/bootstrap-table.min.js"></script>
+    <!--link(rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css")-->
+    <link rel="stylesheet" href="css/bootstrap-table.min.css">
+    <link href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/superhero/bootstrap.min.css" rel="stylesheet" title="main">
+    <title>USBMUX</title>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <h1>USBMUX by luk6xff</h1>
+      <ul class="nav nav-tabs" id="tab">
+        <li class="active"><a href="#tab_usbmux" data-toggle="tab">USB Multiplexer</a></li>
+        <li><a href="#tab_devinfo" data-toggle="tab">Device Info</a></li>
+        <li><a href="#tab_configuration" data-toggle="tab">Configuration</a></li>
+      </ul>
+      <div class="tab-content">
+        <div class="tab-pane fade in active" id="tab_usbmux">
+          <h2>USB Multiplexer</h2>
+          <div class="row">
+            <div class="col-xs-6 col-md-4">
+              <h4 class="text-left">OE
+                <div class="span badge" id="OE_state">OFF</div>
+              </h4>
+            </div>
+            <div class="col-xs-6 col-md-4">
+              <div class="button btn btn-success btn-lg" id="usbmux_oe_on" type="button">ON</div>
+            </div>
+            <div class="col-xs-6 col-md-4">
+              <div class="button btn btn-danger btn-lg" id="usbmux_oe_off" type="button">OFF</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-6 col-md-4">
+              <h4 class="text-left">S
+                <div class="span badge" id="S_state">OFF</div>
+              </h4>
+            </div>
+            <div class="col-xs-6 col-md-4">
+              <div class="button btn btn-success btn-lg" id="usbmux_s_on" type="button">ON</div>
+            </div>
+            <div class="col-xs-6 col-md-4">
+              <div class="button btn btn-danger btn-lg" id="usbmux_s_off" type="button">OFF</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-6 col-md-4">
+              <h4 class="text-left">ID
+                <div class="span badge" id="ID_state">OFF</div>
+              </h4>
+            </div>
+            <div class="col-xs-6 col-md-4">
+              <div class="button btn btn-success btn-lg" id="usbmux_id_on" type="button">ON</div>
+            </div>
+            <div class="col-xs-6 col-md-4">
+              <div class="button btn btn-danger btn-lg" id="usbmux_id_off" type="button">OFF</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-6 col-md-4">
+              <h4 class="text-left">RELAY
+                <div class="span badge" id="RELAY_state">OFF</div>
+              </h4>
+            </div>
+            <div class="col-xs-6 col-md-4">
+              <div class="button btn btn-success btn-lg" id="relay_on" type="button">ON</div>
+            </div>
+            <div class="col-xs-6 col-md-4">
+              <div class="button btn btn-danger btn-lg" id="relay_off" type="button">OFF</div>
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="tab_devinfo">
+          <h2>Device Info</h2>
+          <ul class="nav nav-pills">
+            <li class="active"><a href="#">
+                <div class="span badge pull-right" id="free_heap">-</div> Free Heap</a></li>
+            <li><a href="#">
+                <div class="span badge pull-right" id="free_stack">-</div> Free Stack</a></li>
+          </ul><br>
+          <table id="table_devinfo" data-toggle="table" data-show-colunns="true">
+            <thead>
+              <tr>
+                <th data-field="name" data-align="left" data-sortable="true" data-formatter="nameFormatter">Name</th>
+                <th data-field="value" data-align="left" data-sortable="true" data-formatter="valueFormatter">Value</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="tab-pane fade" id="tab_configuration">
+          <h2>Configuration        </h2>
+          <div class="btn-group">
+            <button class="btn btn-default" id="labelTheme">Theme</button>
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li><a class="change-style-menu-item" href="#" rel="bootstrap">Boostrap</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="cerulean">Cerulean</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="cosmo">Cosmo</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="cyborg">Cyborg</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="darkly">Darkly</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="flatly">Flatly</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="journal">Journal</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="lumen">Lumen</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="paper">Paper</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="readable">Readable</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="sandstone">Sandstone</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="simplex">Simplex</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="slate">Slate</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="spacelab">Spacelab</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="superhero">Superhero</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="united">United</a></li>
+              <li><a class="change-style-menu-item" href="#" rel="yeti">Yeti  </a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="row" style="position:absolute; bottom:0; width:100%">
+        <div class="col-xs-2 col-md-2"><img src="img/baca_logo.png" width="30" height="30"></div>
+        <div class="col-xs-5 col-md-5">
+          <p><a href="https://github.com/luk6xff/usbmux">Project details on my github!</a></p>
+        </div>
+      </div>
+    </div>
+    <!--script(src='js/script.js')-->
+    <script>
+      var timer_updateDevInfo;
+
+      $('a[data-toggle=\"tab\"]').on('shown.bs.tab', function (e) {
+        clearTimeout(timer_updateDevInfo);
+        var target = $(e.target).attr("href")
+        console.log('activated ' + target );
+
+        // IE10, Firefox, Chrome, etc.
+        if (history.pushState)
+          window.history.pushState(null, null, target);
+        else
+          window.location.hash = target;
+
+        if (target=='#tab_devinfo')  {
+          $('#table_devinfo').bootstrapTable('refresh',{silent:true, url:'/devinfotable.json'});
+        }
+      });
+
+      // Create a timer to update device info data every n secondes
+      $('#tab_devinfo').on('load-success.bs.table',function (e,data) {
+        console.log("tab_devinfo loaded");
+        if ($('.nav-tabs .active > a').attr('href')=='#tab_devinfo') {
+          timer_updateDevInfo=setTimeout(function() {
+            $('#table_devinfo').bootstrapTable('refresh',{silent: true, showLoading: false, url: '/devinfotable.json'});
+            updateDeviceInfo();
+          },5000);
+        }
+      });
+
+      function updateDeviceInfo() {
+        $.getJSON('/devinfo.json', function(data) {
+          console.log("Device Info : " + JSON.stringify(data) + "|" + data.free_heap + "|" + data.free_stack) ;
+          $('#free_heap').html(data.free_heap);
+          $('#free_stack').html(data.free_stack);
+        }).fail(function(err) {
+          console.log("err getJSON devinfo.json "+JSON.stringify(err));
+        });
+      };
+
+      function nameFormatter(value, row) {
+        //console.log("nameFormatter");
+        //console.log(value);
+        //console.log(row);
+        var label = value + " " + "<span class='glyphicon " + row.glyph + " pull-left'></span>";
+        return label;
+      }
+
+      function valueFormatter(value, row) {
+        //console.log("valueFormatter");
+        var label = "";
+        if (row.unit != "") {
+          row.unit = "[" + row.unit + "]"
+        }
+        // if ( row.value > row.previous_value ) {
+        label = value + " " + row.unit;
+        //   label = value + row.unit + "<span class='glyphicon glyphicon-chevron-down pull-right'></span>";
+        return label;
+      }
+
+      // USB Multiplexer commands change
+      $('#usbmux_oe_on').click(function()  { setButton('OE','high'); });
+      $('#usbmux_oe_off').click(function() { setButton('OE','low'); });
+
+      $('#usbmux_s_on').click(function()  { setButton('S','high'); });
+      $('#usbmux_s_off').click(function() { setButton('S','low'); });
+
+      $('#usbmux_id_on').click(function()  { setButton('ID','high'); });
+      $('#usbmux_id_off').click(function() { setButton('ID','low'); });
+
+      $('#relay_on').click(function()  { setButton('RELAY','high'); });
+      $('#relay_off').click(function() { setButton('RELAY','low'); });
+
+      function setButton(pin, pinState) {
+        $.post("usbmux?pin=" + pin + "&state=" + pinState).done(function(data) {
+          //console.log("setButton " + JSON.stringify(data));
+          var pin_id_usbmux = "#" + pin + "_state";
+          //console.log(id_usbmux);
+          if (data.success === "true") {
+            if (data.state === "high") {
+              $(pin_id_usbmux).html("ON");
+            } else {
+              $(pin_id_usbmux).html("OFF");
+            }
+          } else {
+            $(pin_id_usbmux).html('!');
+          }
+        }).fail(function(err) {
+          console.log("err setButton " + JSON.stringify(err));
+        });
+      }
+
+      // Change current theme
+      // Adapted from : https://wdtz.org/bootswatch-theme-selector.html
+      var supports_storage = supports_html5_storage();
+      if (supports_storage) {
+        var theme = localStorage.theme;
+        console.log("Theme was loaded: " + theme);
+        if (theme) {
+          set_theme(get_themeUrl(theme));
+        }
+      }
+
+      // New theme selected
+      jQuery(function($) {
+        $('body').on('click', '.change-style-menu-item', function() {
+          var theme_name = $(this).attr('rel');
+          console.log("New theme selected: " + theme_name);
+          var theme_url = get_themeUrl(theme_name);
+          console.log("URL theme : " + theme_url);
+          set_theme(theme_url);
+        });
+      });
+
+      // Get theme URL
+      function get_themeUrl(theme_name) {
+        $('#labelTheme').html("Th&egrave;me : " + theme_name);
+        var url_theme = "";
+        if ( theme_name === "bootstrap" ) {
+          url_theme = "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css";
+        } else {
+          url_theme = "https://maxcdn.bootstrapcdn.com/bootswatch/3.3.7/" + theme_name + "/bootstrap.min.css";
+        }
+        if (supports_storage) {
+          // Save the selected theme into the local database
+          localStorage.theme = theme_name;
+        }
+        return url_theme;
+      }
+
+      // Apply a new theme
+      function set_theme(theme_url) {
+        $('link[title="main"]').attr('href', theme_url);
+      }
+
+      // Is a local storage available ?
+      function supports_html5_storage() {
+        try {
+          return 'localStorage' in window && window['localStorage'] !== null;
+        } catch (e) {
+          return false;
+        }
+      }
+    </script>
+  </body>
+</html>
