@@ -187,6 +187,10 @@ static void updateUsbMuxGpio()
                     DBG.println("USBMUX Sleep mode");
                     usbMux.disableAll();
                 }
+                else if (usbMuxState == "low")
+                {
+                    // Nothing
+                }
                 else
                 {
                     success = "false";
