@@ -7,15 +7,10 @@
 
 #include "utils.h"
 #include "hw_config.h"
+#include "secret_data.h"
 #include "usbmuxdriver.h"
 #include "power-relay.h"
-
-
-
-#define STASSID "INTEHNETY"
-#define STAPSK  "Faza199490"
-#define STASSID "INTEHNETY"
-#define STAPSK  "Faza199490"
+#include "CommandHandler.h"
 
 const char* ssid     = STASSID;
 const char* password = STAPSK;
@@ -146,6 +141,8 @@ static ESP8266WebServer server(80);    // Create a webserver object that listens
 static UsbMuxDriver usbMux(USB_ID_PIN);
 static PowerRelay pwrRelay(RELAY_IN_PIN);
 DeviceInfo devInfo;
+// Create a CommandHandler Instance
+CommandHandler cmdHdl;
 
 
 static void fillDeviceInfo(DeviceInfo &devInfo)
@@ -189,7 +186,7 @@ static void updateUsbMuxGpio()
                 }
                 else if (usbMuxState == "low")
                 {
-                    // Nothing
+                    //
                 }
                 else
                 {
@@ -225,7 +222,7 @@ static void updateUsbMuxGpio()
                 if (usbMuxState == "low")
                 {
                     DBG.println("USB_ID low");
-                    digitalWrite(pin, HIGH);
+                    digitalWrite(pin, LOW);
                 }
                 else if (usbMuxState == "high")
                 {
@@ -359,6 +356,13 @@ void setup()
     DBG.println("HTTP server started");
     // Add service to MDNS-SD
     MDNS.addService("http", "tcp", 80);
+
+
+    // Setup callbacks for SerialCommand commands
+    // cmdHdl.addCommand("stassid", sayHello);
+    // cmdHdl.addCommand("stapsk",  forwardRemaining);
+    // cmdHdl.addCommand("ch",     processCommand);
+    // cmdHdl.setDefaultHandler(unrecognized);
 }
 
 
