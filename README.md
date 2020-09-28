@@ -34,6 +34,6 @@ obudowa z-23
 
 | PART NAME                          | SHOP LINK                                                                                        | DATASHEET | QUANTITY | PRICE [PLN] |
 |------------------------------------|--------------------------------------------------------------------------------------------------|-----------|----------|-------------|
-| ESP8266 WEMOS D1-MINI | [Allegro](https://allegro.pl/oferta/modul-wifi-d1-mini-esp8266-ex-arduino-iot-wemos-9679673735)               |[ESP8266-D1MINI](./https://docs.wemos.cc/en/latest/d1/d1_mini.html)           | 1        | 14.99       |
-| TS3USB221 - USB 2.0 Mux          | [AliExpress](https://pl.aliexpress.com/item/32829759803.html) |[TS3USB221](./app/lib/TS3USB221/docs/ts3usb221.pdf)            | 1        | 5.00       |
-|                                    |                                                                                                  |           |          |             |
+| ESP8266 WEMOS D1-MINI | [Allegro](https://allegro.pl/oferta/modul-wifi-d1-mini-esp8266-ex-arduino-iot-wemos-9679673735)|[ESP8266-D1MINI](./https://docs.wemos.cc/en/latest/d1/d1_mini.html)           | 1        | 14.99       |
+| TS3USB221 - USB 2.0 Mux          | [AliExpress](https://pl.aliexpress.com/item/32829759803.html) |[TS3USB221](./app/lib/TS3USB221/docs/ts3usb221.pdf) | 1        | 5.00    |
+| CASE type: Z23  |[Allegro](https://allegro.pl/oferta/z-23-obudowa-z-tworzywa-84x59x30mm-polistyren-z23-8519706140) |[TS3USB221](./docs/datasheet/Z23.pdf)|1      | 3.39    |
