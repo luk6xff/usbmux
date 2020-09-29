@@ -15,6 +15,13 @@ public:
         USB_ID_LOW  = LOW,
     } UsbIdState;
 
+    typedef enum
+    {
+        USB_CHANNEL_0  = 0,
+        USB_CHANNEL_1  = 1,
+        USB_CHANNEL_INVALID,
+    } UsbChannelNumber;
+
 public:
 
     /**
@@ -30,7 +37,7 @@ public:
      * @param chNumber - channel number to be enabled on the output
      * @param id       - usb id pin state enbaled on given channel
      */
-    void enableChannel(uint8_t chNumber, UsbIdState idState);
+    void enableChannel(UsbChannelNumber chNumber, UsbIdState idState);
 
     /**
      * @brief Disbles all channels, not forwarding any on the output
@@ -47,15 +54,9 @@ private:
      * @param chNumber - channel number to be checked
      * @return Is channel number valid (true) or not (false)
      */
-    bool isChannelValid(uint8_t chNumber);
+    bool isChannelValid(UsbChannelNumber chNumber);
 
 private:
-
-    /**
-     * @brief Number of physically available multiplexer channels
-     */
-    static const int k_usbInputChannelsNumber = 2;
-
     /**
      * @brief USB multiplexer dev objects
      */

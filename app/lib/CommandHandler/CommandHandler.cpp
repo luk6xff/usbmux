@@ -24,7 +24,6 @@
  */
 
 #include "CommandHandler.h"
-
 /**
  * Constructor allowing to change default delim and term
  * Example: SerialCommand sCmd(" ", ';');
@@ -56,7 +55,7 @@ CommandHandler::CommandHandler(const char *newdelim, char newterm)
  * This is used for matching a found token in the buffer, and gives the pointer
  * to the handler function to deal with it.
  */
-void CommandHandler::addCommand(const char *command, void (*function)()) {
+void CommandHandler::addCommand(const char *command, TCmdHandlerFunction function) {
   #ifdef COMMANDHANDLER_DEBUG
     Serial.print("Adding command (");
     Serial.print(commandCount);
@@ -75,7 +74,7 @@ void CommandHandler::addCommand(const char *command, void (*function)()) {
  * This is used for matching a found token in the buffer, and gives the pointer
  * to the handler function to deal with the remaining of the command
  */
-void CommandHandler::addRelay(const char *command, void (*function)(const char *, void*), void* pt2Object) {
+void CommandHandler::addRelay(const char *command, TRelayHandlerFunction function, void* pt2Object) {
   #ifdef COMMANDHANDLER_DEBUG
     Serial.print("Adding relay (");
     Serial.print(relayCount);
@@ -182,7 +181,7 @@ void CommandHandler::processChar(char inChar) {
           #endif
 
           // Execute the stored handler function for the command
-          (*commandList[i].function)();
+          (commandList[i].function)();
           matched = true;
           break;
         }
@@ -205,7 +204,7 @@ void CommandHandler::processChar(char inChar) {
           #endif
 
           // Execute the stored handler function for the command
-          (*relayList[i].function)(remaining(), relayList[i].pt2Object);
+          (relayList[i].function)(remaining(), relayList[i].pt2Object);
           matched = true;
           break;
         }

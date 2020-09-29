@@ -46,14 +46,16 @@
 #define STRING_NULL_TERM '\0'
 
 // Uncomment the next line to run the library in debug mode (verbose messages)
-// #define COMMANDHANDLER_DEBUG
+#define COMMANDHANDLER_DEBUG
 
+typedef std::function<void(void)> TCmdHandlerFunction;
+typedef std::function<void(const char *, void *)> TRelayHandlerFunction;
 
 class CommandHandler {
   public:
     CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm = COMMANDHANDLER_DEFAULT_TERM);   // Constructor
-    void addCommand(const char *command, void(*function)());  // Add a command to the processing dictionary.
-    void addRelay(const char *command, void (*function)(const char *, void*), void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
+    void addCommand(const char *command, TCmdHandlerFunction function);  // Add a command to the processing dictionary.
+    void addRelay(const char *command, TRelayHandlerFunction function, void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
     void setDefaultHandler(void (*function)(const char *));   // A handler to call when no valid command received.
     void setDefaultHandler(void (*function)(const char *, void*), void* pt2Object);   // A handler to call when no valid command received.
 
@@ -107,7 +109,7 @@ class CommandHandler {
     // Command/handler dictionary
     struct CommandHandlerCallback {
       char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
-      void (*function)();
+      TCmdHandlerFunction function;
     };                                    // Data structure to hold Command/Handler function key-value pairs
     CommandHandlerCallback *commandList;   // Actual definition for command/handler array
     byte commandCount;
@@ -116,7 +118,7 @@ class CommandHandler {
     struct RelayHandlerCallback {
       char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
       void* pt2Object;
-      void (*function)(const char *, void*);
+      TRelayHandlerFunction function;
     };                                 // Data structure to hold Relay/Handler function key-value pairs
     RelayHandlerCallback *relayList;   // Actual definition for Relay/handler array
     byte relayCount;

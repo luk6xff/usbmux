@@ -15,7 +15,7 @@ UsbMuxDriver::UsbMuxDriver(int usbIdPin)
 }
 
 //------------------------------------------------------------------------------
-void UsbMuxDriver::enableChannel(uint8_t chNumber, UsbIdState idState)
+void UsbMuxDriver::enableChannel(UsbChannelNumber chNumber, UsbIdState idState)
 {
     if (!isChannelValid(chNumber))
     {
@@ -23,12 +23,12 @@ void UsbMuxDriver::enableChannel(uint8_t chNumber, UsbIdState idState)
         return;
     }
 
-    if (chNumber == 0)
+    if (chNumber == USB_CHANNEL_0)
     {
         ts3usb221_enable_1D_channel(&m_usbMuxDev);
     }
 
-    else if (chNumber == 1)
+    else if (chNumber == USB_CHANNEL_1)
     {
         ts3usb221_enable_2D_channel(&m_usbMuxDev);
     }
@@ -48,9 +48,9 @@ void UsbMuxDriver::disableAll()
 
 //------------------------------------------------------------------------------
 
-bool UsbMuxDriver::isChannelValid(uint8_t chNumber)
+bool UsbMuxDriver::isChannelValid(UsbChannelNumber chNumber)
 {
-    return (chNumber < k_usbInputChannelsNumber) ? true : false;
+    return (chNumber < UsbChannelNumber::USB_CHANNEL_INVALID) ? true : false;
 }
 
 
