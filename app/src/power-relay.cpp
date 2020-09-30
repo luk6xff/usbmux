@@ -17,3 +17,9 @@ void PowerRelay::enable(RelayState state)
 }
 
 //------------------------------------------------------------------------------
+const PowerRelay::RelayState PowerRelay::state() const
+{
+    return (digitalRead(m_onOffPin) == 0) ? RELAY_ON : RELAY_OFF;
+}
+
+//------------------------------------------------------------------------------

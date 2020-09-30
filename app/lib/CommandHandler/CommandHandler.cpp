@@ -93,11 +93,11 @@ void CommandHandler::addRelay(const char *command, TRelayHandlerFunction functio
  * This sets up a handler to be called in the event that the receveived command string
  * isn't in the list of commands.
  */
-void CommandHandler::setDefaultHandler(void (*function)(const char *)) {
+void CommandHandler::setDefaultHandler(TDefaultHandlerFunction function) {
   defaultHandler = function;
 }
 
-void CommandHandler::setDefaultHandler(void (*function)(const char *, void*), void* pt2Object) {
+void CommandHandler::setDefaultHandler(TDefaultWrapperHandlerFunction function, void* pt2Object) {
   pt2defaultHandlerObject = pt2Object;
   wrapper_defaultHandler = function;
 }
@@ -158,6 +158,8 @@ void CommandHandler::processChar(char inChar) {
     #ifdef COMMANDHANDLER_DEBUG
       Serial.print("Received: ");
       Serial.println(buffer);
+    #else
+      Serial.printf("Received Command: %s\r\n", buffer);
     #endif
 
     char *command = strtok_r(buffer, delim, &last);   // Search for command at start of buffer
@@ -178,8 +180,9 @@ void CommandHandler::processChar(char inChar) {
           #ifdef COMMANDHANDLER_DEBUG
             Serial.print("Matched Command: ");
             Serial.println(command);
+          #else
+            Serial.printf("Matched Command: %s\r\n", buffer);
           #endif
-
           // Execute the stored handler function for the command
           (commandList[i].function)();
           matched = true;
@@ -211,9 +214,9 @@ void CommandHandler::processChar(char inChar) {
       }
       if (!matched){
         if (defaultHandler != NULL) {
-          (*defaultHandler)(command);
+          (defaultHandler)(command);
         } else if (pt2defaultHandlerObject != NULL) {
-          (*wrapper_defaultHandler)(command, pt2defaultHandlerObject);
+          (wrapper_defaultHandler)(command, pt2defaultHandlerObject);
         }
       }
     }
@@ -363,13 +366,23 @@ char* CommandHandler::readStringArg() {
 /**
  * Compare the next argument with a string
  */
-bool CommandHandler::compareStringArg(const char *stringToCompare) {
+bool CommandHandler::compareCheckStringArg(const char *stringToCompare) {
+  bool ret = false;
   char *arg;
+  // Store the last pointer read
+  char *lastToken;
+  memcpy(bufferTemp, buffer, COMMANDHANDLER_BUFFER);
+  memcpy(&lastToken, &last, sizeof(last));
+  //Serial.printf("1. last:%s, lastToken:%s\r\n", last, lastToken);
   arg = next();
+  //Serial.printf("stringToCompare:%s,  arg:%s\r\n", stringToCompare, arg);
   if (arg != NULL) {
-    return (strcmp(stringToCompare, arg) == 0) ? true : false;
+    ret = (strcmp(stringToCompare, arg) == 0) ? true : false;
   }
-  return false;
+  memcpy(buffer, bufferTemp, COMMANDHANDLER_BUFFER);
+  memcpy(&last, &lastToken, sizeof(last));
+  //Serial.printf("2. last:%s, lastToken:%s\r\n", last, lastToken);
+  return ret;
 }
 
 /*****************************************

@@ -3,35 +3,38 @@
 #include "secret_data.h"
 #include "utils.h"
 
-
-const char *DevServer::k_hostName = "usbmux";
+//------------------------------------------------------------------------------
+const char *DevServer::k_hostName   = "usbmux";
+const int   DevServer::k_serverPort = 80;
 
 //------------------------------------------------------------------------------
-DevServer::DevServer()
+DevServer::DevServer(Commander& cmdr)
     : ssid(STASSID)
     , password(STAPSK)
-    , server(80)
+    , server(k_serverPort)
     , fileSystem(&LittleFS)
     , fileSystemConfig(LittleFSConfig())
+    , m_cmdr(cmdr)
 {
 
+}
+
+//------------------------------------------------------------------------------
+void DevServer::init()
+{
     if (connectToAP())
     {
-        DBG.println('\n');
-        DBG.print("Connected to: ");
-        DBG.println(WiFi.SSID());
-        DBG.print("IP address:\t");
-        DBG.println(WiFi.localIP());
+        dbg("\nConnected to: %s\nIP address:\t %s", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
     }
 
     if (!LittleFS.begin())
     {
         // Sth bad happened
-        DBG.println("LittleFS Mount failed");
+        dbg("LittleFS Mount failed");
     }
     else
     {
-        DBG.println("LittleFS Mount succesfull");
+        dbg("LittleFS Mount succesfull");
     }
 
     server.on("/devinfotable.json", std::bind(&DevServer::handleCreateDevInfoTable, this));
@@ -46,22 +49,21 @@ DevServer::DevServer()
     // Start the mDNS responder for usbmux
     if (MDNS.begin(k_hostName))
     {
-        DBG.println("mDNS responder started");
+        dbg("mDNS responder started");
     }
     else
     {
-        DBG.println("Error setting up MDNS responder!");
+        dbg("Error setting up MDNS responder!");
     }
 
     server.onNotFound(std::bind(&DevServer::handleNotFound, this));
 
     // Start the server
     server.begin();
-    DBG.println("HTTP server started");
+    dbg("HTTP server started");
 
     // Add service to MDNS-SD
     MDNS.addService("http", "tcp", 80);
-
 }
 
 //------------------------------------------------------------------------------
@@ -80,17 +82,17 @@ bool DevServer::connectToAP()
     wifiMulti.addAP("ssid_ap2", "passwd_ap2");
     wifiMulti.addAP("ssid_ap3", "passwd_ap3");
 
-    DBG.println("Connecting ...");
+    dbg("Connecting ...");
     while (wifiMulti.run() != WL_CONNECTED)
     {
         // Wait for the Wi-Fi to connect: scan for Wi-Fi networks, and connect to the strongest network
         delay(500);
         tries++;
-        DBG.print('.');
+        dbg(".");
         // 10 seconds timeout
         if (tries > 20)
         {
-            DBG.print('Connecting to AP failed!!!');
+            dbg("Connecting to AP failed!!!");
             connected = false;
             break;
         }
@@ -110,140 +112,138 @@ void DevServer::handleNotFound()
 void DevServer::handleUpdateUsbMuxGpio()
 {
     String usbMuxPin = server.arg("pin");
-    String usbMuxState = server.arg("state");
+    String usbMuxPinState = server.arg("state");
+    String usbIdPinState = server.arg("usbidstate");
     String success = "true";
 
-    // const std::map<String, int> validTable =
-    // {
-    //     {"OE",    0},
-    //     {"S",     1},
-    //     {"ID",    2},
-    //     {"RELAY", 3},
-    // };
+    const std::map<String, int> validTable =
+    {
+        {"CH_0",     0},
+        {"CH_1",     1},
+        {"POWER",    2},
+    };
+    dbg("COMMAND: %s, %s, %s", usbMuxPin.c_str(), usbMuxPinState.c_str(), usbIdPinState.c_str());
+    auto pinSearch = validTable.find(usbMuxPin);
+    if (pinSearch != validTable.end())
+    {
 
-    // auto pinSearch = validTable.find(usbMuxPin);
-    // if (pinSearch != validTable.end())
-    // {
+        switch (pinSearch->second)
+        {
+            case 0:
+            {
+                CmdSetChannelMsg msg(UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_0);
+                if (usbMuxPinState == "on")
+                {
+                    if (usbIdPinState == "1")
+                    {
+                        msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_HIGH;
+                    }
+                    else
+                    {
+                        msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_LOW;
+                    }
+                }
+                else if (usbMuxPinState == "off")
+                {
+                    dbg("USBMUX Sleep mode");
+                    //usbMux.disableAll();
+                }
+                else
+                {
+                    success = "false";
+                }
 
-    //     switch (pinSearch->second)
-    //     {
-    //         case 0:
-    //         {
-    //             if (usbMuxState == "high")
-    //             {
-    //                 DBG.println("USBMUX Sleep mode");
-    //                 usbMux.disableAll();
-    //             }
-    //             else if (usbMuxState == "low")
-    //             {
-    //                 //
-    //             }
-    //             else
-    //             {
-    //                 success = "false";
-    //             }
-    //             break;
-    //         }
+                m_cmdr.processCmdMsg(msg);
+                break;
+            }
 
-    //         case 1:
-    //         {
-    //             if (usbMuxState == "low")
-    //             {
-    //                 DBG.println("USBMUX Channel 0 enabled");
-    //                 // Enable channel 0
-    //                 usbMux.enableChannel(0, UsbMuxDriver::USB_ID_HIGH);
-    //             }
-    //             else if (usbMuxState == "high")
-    //             {
-    //                 DBG.println("USBMUX Channel 1 enabled");
-    //                 // Enable channel 1
-    //                 usbMux.enableChannel(1, UsbMuxDriver::USB_ID_HIGH);
-    //             }
-    //             else
-    //             {
-    //                 success = "false";
-    //             }
-    //             break;
-    //         }
+            case 1:
+            {
+                CmdSetChannelMsg msg(UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_1);
+                if (usbMuxPinState == "on")
+                {
+                    if (usbIdPinState == "1")
+                    {
+                        msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_HIGH;
+                    }
+                    else
+                    {
+                        msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_LOW;
+                    }
+                }
+                else if (usbMuxPinState == "off")
+                {
+                    dbg("USBMUX Sleep mode");
+                    //usbMux.disableAll();
+                }
+                else
+                {
+                    success = "false";
+                }
 
-    //         case 2:
-    //         {
-    //             int pin = USB_ID_PIN;
-    //             if (usbMuxState == "low")
-    //             {
-    //                 DBG.println("USB_ID low");
-    //                 digitalWrite(pin, LOW);
-    //             }
-    //             else if (usbMuxState == "high")
-    //             {
-    //                 DBG.println("USB_ID high");
-    //                 digitalWrite(pin, HIGH);
-    //             }
-    //             else
-    //             {
-    //                 success = "false";
-    //             }
-    //             break;
-    //         }
+                m_cmdr.processCmdMsg(msg);
+                break;
+            }
 
-    //         case 3:
-    //         {
-    //             if (usbMuxState == "low")
-    //             {
-    //                 DBG.println("PowerRelay disabled!");
-    //                 // Disable relay
-    //                 pwrRelay.enable(PowerRelay::RELAY_OFF);
-    //             }
-    //             else if (usbMuxState == "high")
-    //             {
-    //                 DBG.println("PowerRelay enabled!");
-    //                 // Enable relay
-    //                 pwrRelay.enable(PowerRelay::RELAY_ON);
-    //             }
-    //             else
-    //             {
-    //                 success = "false";
-    //             }
-    //             break;
-    //         }
+            case 2:
+            {
+                if (usbMuxPinState == "off")
+                {
+                    dbg("PowerRelay disabled!");
+                    CmdSetRelayMsg msg(PowerRelay::RelayState::RELAY_OFF);
+                    m_cmdr.processCmdMsg(msg);
+                }
+                else if (usbMuxPinState == "on")
+                {
+                    dbg("PowerRelay enabled!");
+                    // Enable relay
+                    CmdSetRelayMsg msg(PowerRelay::RelayState::RELAY_ON);
+                    m_cmdr.processCmdMsg(msg);
+                }
+                else
+                {
+                    success = "false";
+                }
+                break;
+            }
 
-    //         default:
-    //         {
-    //             success = "false";
-    //             break;
-    //         }
-    //     }
-    // }
-    // else
-    // {
-    //     success = "false";
-    // }
+            default:
+            {
+                success = "false";
+                break;
+            }
+        }
+    }
+    else
+    {
+        success = "false";
+    }
 
-    // if (success == false)
-    // {
-    //     DBG.println("Setting USBMUX pin value failed!");
-    // }
+    if (success == false)
+    {
+        dbg("Setting USBMUX pin value failed!");
+    }
 
 
     String json = "{\"usbmux\":\"" + String(usbMuxPin) + "\",";
-    json += "\"state\":\"" + String(usbMuxState) + "\",";
+    json += "\"state\":\"" + String(usbMuxPinState) + "\",";
     json += "\"success\":\"" + String(success) + "\"}";
 
     server.send(200, "application/json", json);
-    DBG.printf("USBMUX GPIO pin:%s has changed to state:%s!\n", usbMuxPin.c_str(), usbMuxState.c_str());
+    dbg("USBMUX GPIO pin:%s has changed to state:%s!\n", usbMuxPin.c_str(), usbMuxPinState.c_str());
 }
 
 //------------------------------------------------------------------------------
 void DevServer::handleCreateDevInfoTable()
 {
-    DBG.println("handleCreateDevInfoTable called!!");
-    server.send(200, "application/json", ""/*devInfo.createDevInfoTable()*/);
+    dbg("handleCreateDevInfoTable called!!");
+    server.send(200, "application/json", m_devInfo.createDevInfoTable());
 }
 
 //------------------------------------------------------------------------------
 void DevServer::handleSendDevInfo()
 {
-    DBG.println("handleSendDevInfo called!!");
+    dbg("handleSendDevInfo called!!");
     String json;// = "{\"freeHeap\":\"" + String(devInfo.freeHeap) + "\",";
     //json += "\"freeStack\":\"" + String(devInfo.freeStack) + "\"}";
     server.send(200, "application/json", json);

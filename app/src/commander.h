@@ -11,8 +11,6 @@
 
 
 
-
-
 ///< Forward declaration of Actual Command classes
 class CommandMsg;
 class CmdSetChannelMsg;
@@ -85,15 +83,15 @@ class CmdSetChannelMsg : public CommandMsgBase<CmdSetChannelMsg>
 
 public:
     CmdSetChannelMsg(UsbMuxDriver::UsbChannelNumber chNum,
-                     UsbMuxDriver::UsbIdState idState)
-        : m_channelNumber(chNum)
-        , m_usbIdState(idState)
+                     UsbMuxDriver::UsbIdState idState=UsbMuxDriver::UsbIdState::USB_ID_HIGH)
+        : channelNumber(chNum)
+        , usbIdState(idState)
     {
     }
 
 public:
-    UsbMuxDriver::UsbChannelNumber m_channelNumber;
-    UsbMuxDriver::UsbIdState m_usbIdState; 
+    UsbMuxDriver::UsbChannelNumber channelNumber;
+    UsbMuxDriver::UsbIdState usbIdState; 
 };
 
 
@@ -102,13 +100,26 @@ class CmdSetRelayMsg : public CommandMsgBase<CmdSetRelayMsg>
 {
 
 public:
-    CmdSetRelayMsg (PowerRelay::RelayState state)
-        : m_relState(state)
+    CmdSetRelayMsg()
+        : relayState(PowerRelay::RelayState::RELAY_OFF)
+        , reset(false)
+        , resetTimeoutMs(k_defaultTimeoutMs)
+    {
+    }
+
+    CmdSetRelayMsg (PowerRelay::RelayState state, bool reset=false, uint32_t resetTime=k_defaultTimeoutMs)
+        : relayState(state)
+        , reset(reset)
+        , resetTimeoutMs(resetTime)
     {
     }
 
 public:
-    PowerRelay::RelayState m_relState;
+    PowerRelay::RelayState relayState;
+    bool reset;
+    uint32_t resetTimeoutMs;
+
+    static int const k_defaultTimeoutMs = 1000;
 };
 
 
@@ -142,5 +153,4 @@ private:
 
 private:
     CmdHandler m_cmdHandler;
-
 };

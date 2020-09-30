@@ -5,29 +5,21 @@
 
 
 
-
-
-
-//static DevServer server;
 static Commander cmdr;
+static DevServer server(cmdr);
 static SerialCmdHandler serCmdHandler(cmdr);
 
 
 void setup()
 {
-    DBG.begin(DBG_BAUDRATE);
+    utils::init();
+    server.init();
 }
 
 
 void loop()
 {
-
-    //server.process();
+    server.process();
     serCmdHandler.process();
-    static int i = 0;
-    if ((i++ % 10000000) == 0)
-        Serial.println("TEST");
+    //utils::update();
 }
-
-
-

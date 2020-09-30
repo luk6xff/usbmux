@@ -26,47 +26,50 @@
           <h2>USB Multiplexer</h2>
           <div class="row">
             <div class="col-xs-6 col-md-4">
-              <h4 class="text-left">OE
-                <div class="span badge" id="OE_state">OFF</div>
+              <h4 class="text-left">CH_0
+                <div class="span badge" id="CH_0_state">OFF</div>
               </h4>
             </div>
             <div class="col-xs-6 col-md-4">
-              <div class="button btn btn-success btn-lg" id="usbmux_oe_on" type="button">ON</div>
+              <div class="button btn btn-success btn-lg" id="usbmux_ch0_on" type="button">ON</div>
             </div>
             <div class="col-xs-6 col-md-4">
-              <div class="button btn btn-danger btn-lg" id="usbmux_oe_off" type="button">OFF</div>
+              <div class="button btn btn-danger btn-lg" id="usbmux_ch0_off" type="button">OFF</div>
+            </div>
+            <div class="col-auto">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="usbmux_ch0_usbid" data-toggle="toggle">
+                <label class="form-check-label" for="usbmux_ch0_usbid">
+                  CH_0_USB_ID
+                </label>
+              </div>
             </div>
           </div>
           <div class="row">
             <div class="col-xs-6 col-md-4">
-              <h4 class="text-left">S
-                <div class="span badge" id="S_state">OFF</div>
+              <h4 class="text-left">CH_1
+                <div class="span badge" id="CH_1_state">OFF</div>
               </h4>
             </div>
             <div class="col-xs-6 col-md-4">
-              <div class="button btn btn-success btn-lg" id="usbmux_s_on" type="button">ON</div>
+              <div class="button btn btn-success btn-lg" id="usbmux_ch1_on" type="button">ON</div>
             </div>
             <div class="col-xs-6 col-md-4">
-              <div class="button btn btn-danger btn-lg" id="usbmux_s_off" type="button">OFF</div>
+              <div class="button btn btn-danger btn-lg" id="usbmux_ch1_off" type="button">OFF</div>
+            </div>
+            <div class="col-auto">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="usbmux_ch1_usbid" data-toggle="toggle">
+                <label class="form-check-label" for="usbmux_ch0_usbid">
+                  CH_1_USB_ID
+                </label>
+              </div>
             </div>
           </div>
           <div class="row">
             <div class="col-xs-6 col-md-4">
-              <h4 class="text-left">ID
-                <div class="span badge" id="ID_state">OFF</div>
-              </h4>
-            </div>
-            <div class="col-xs-6 col-md-4">
-              <div class="button btn btn-success btn-lg" id="usbmux_id_on" type="button">ON</div>
-            </div>
-            <div class="col-xs-6 col-md-4">
-              <div class="button btn btn-danger btn-lg" id="usbmux_id_off" type="button">OFF</div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-6 col-md-4">
-              <h4 class="text-left">RELAY
-                <div class="span badge" id="RELAY_state">OFF</div>
+              <h4 class="text-left">POWER
+                <div class="span badge" id="POWER_state">OFF</div>
               </h4>
             </div>
             <div class="col-xs-6 col-md-4">
@@ -190,20 +193,17 @@
       }
 
       // USB Multiplexer commands change
-      $('#usbmux_oe_on').click(function()  { setButton('OE','high'); });
-      $('#usbmux_oe_off').click(function() { setButton('OE','low'); });
+      $('#usbmux_ch0_on').click(function()  { setButton('CH_0','on'); });
+      $('#usbmux_ch0_off').click(function() { setButton('CH_0','off'); });
 
-      $('#usbmux_s_on').click(function()  { setButton('S','high'); });
-      $('#usbmux_s_off').click(function() { setButton('S','low'); });
+      $('#usbmux_ch1_on').click(function()  { setButton('CH_1','on'); });
+      $('#usbmux_ch1_off').click(function() { setButton('CH_1','off'); });
 
-      $('#usbmux_id_on').click(function()  { setButton('ID','high'); });
-      $('#usbmux_id_off').click(function() { setButton('ID','low'); });
+      $('#relay_on').click(function()  { setButton('POWER','on'); });
+      $('#relay_off').click(function() { setButton('POWER','off'); });
 
-      $('#relay_on').click(function()  { setButton('RELAY','high'); });
-      $('#relay_off').click(function() { setButton('RELAY','low'); });
-
-      function setButton(pin, pinState) {
-        $.post("usbmux?pin=" + pin + "&state=" + pinState).done(function(data) {
+      function setButton(pin, pinState, usbIdState) {
+        $.post("usbmux?pin="+pin + "&state="+pinState + "&usbidstate="+document.getElementById('usbmux_ch0_usbid').checked).done(function(data) {
           //console.log("setButton " + JSON.stringify(data));
           var pin_id_usbmux = "#" + pin + "_state";
           //console.log(id_usbmux);

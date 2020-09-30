@@ -31,6 +31,14 @@ public:
      */
     void enable(RelayState state);
 
+
+    /**
+     * @brief Get current relay pin state
+     *
+     * @param state - relay state (on/off)
+     */
+    const RelayState state() const;
+
 private:
 
     /**

@@ -46,18 +46,21 @@
 #define STRING_NULL_TERM '\0'
 
 // Uncomment the next line to run the library in debug mode (verbose messages)
-#define COMMANDHANDLER_DEBUG
+//#define COMMANDHANDLER_DEBUG
 
 typedef std::function<void(void)> TCmdHandlerFunction;
 typedef std::function<void(const char *, void *)> TRelayHandlerFunction;
+typedef std::function<void(const char *)> TDefaultHandlerFunction;
+typedef std::function<void(const char *, void *)> TDefaultWrapperHandlerFunction;
+
 
 class CommandHandler {
   public:
     CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm = COMMANDHANDLER_DEFAULT_TERM);   // Constructor
     void addCommand(const char *command, TCmdHandlerFunction function);  // Add a command to the processing dictionary.
     void addRelay(const char *command, TRelayHandlerFunction function, void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
-    void setDefaultHandler(void (*function)(const char *));   // A handler to call when no valid command received.
-    void setDefaultHandler(void (*function)(const char *, void*), void* pt2Object);   // A handler to call when no valid command received.
+    void setDefaultHandler(TDefaultHandlerFunction function);   // A handler to call when no valid command received.
+    void setDefaultHandler(TDefaultWrapperHandlerFunction function, void* pt2Object);   // A handler to call when no valid command received.
 
     void setInCmdSerial(Stream &inStream); // define to which serial to send the read commands
     void processSerial();  // Process what on the in stream
@@ -76,7 +79,7 @@ class CommandHandler {
     float readFloatArg();
     double readDoubleArg();
     char *readStringArg();
-    bool compareStringArg(const char *stringToCompare);
+    bool compareCheckStringArg(const char *stringToCompare);
 
     //helpers to create a message
     void setCmdHeader(const char *cmdHeader, bool addDelim = true); // setting a char to be added at the start of each out message (default "")
@@ -124,9 +127,9 @@ class CommandHandler {
     byte relayCount;
 
     // Pointer to the default handler function
-    void (*defaultHandler)(const char *);
+    TDefaultHandlerFunction defaultHandler;
     void* pt2defaultHandlerObject;
-    void (*wrapper_defaultHandler)(const char *, void*);
+    TDefaultWrapperHandlerFunction wrapper_defaultHandler;
 
     const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
     char term;     // Character that signals end of command (default '\n')
@@ -134,6 +137,8 @@ class CommandHandler {
     char buffer[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters while waiting for terminator character
     byte bufPos;                        // Current position in the buffer
     char *last;                         // State variable used by strtok_r during processing
+
+    char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data
 
     char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
 

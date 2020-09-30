@@ -20,11 +20,14 @@ public:
 
 private:
 
+
     void setCommands();
+    void cmdMenu();
 
     void processCmdChannel();
     void processCmdPower();
     void processCmdWifi();
+    void processCmdUnrecognized();
 
 private:
     Commander& m_cmdr;

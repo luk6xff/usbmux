@@ -19,7 +19,7 @@ void UsbMuxDriver::enableChannel(UsbChannelNumber chNumber, UsbIdState idState)
 {
     if (!isChannelValid(chNumber))
     {
-        DBG.printf("[ERROR] Invalid usb mux channel number: %d!\n", chNumber);
+        err("Invalid usb mux channel number: %d!\n", chNumber);
         return;
     }
 

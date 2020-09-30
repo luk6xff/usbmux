@@ -1,4 +1,5 @@
 #include "serial-cmdhandler.h"
+#include "utils.h"
 
 
 //------------------------------------------------------------------------------
@@ -17,7 +18,9 @@ SerialCmdHandler::SerialCmdHandler(Commander& cmdr)
     {
         addCommand(cmd.first.c_str(), cmd.second);
     }
-    // setDefaultHandler(unrecognized);
+
+    setDefaultHandler(std::bind(&SerialCmdHandler::processCmdUnrecognized, this));
+    cmdMenu();
 }
 
 //------------------------------------------------------------------------------
@@ -29,9 +32,28 @@ void SerialCmdHandler::process()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::setCommands()
 {
-    m_commands = SerialCmdMap{{"ch", std::bind(&SerialCmdHandler::processCmdChannel, this)},
-                              {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
-                              {"wf", std::bind(&SerialCmdHandler::processCmdWifi, this)}};
+    m_commands = SerialCmdMap{
+                            {"h",   std::bind(&SerialCmdHandler::cmdMenu, this)},
+                            {"ch",  std::bind(&SerialCmdHandler::processCmdChannel, this)},
+                            {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
+                            {"wf",  std::bind(&SerialCmdHandler::processCmdWifi, this)}
+                            };
+}
+
+//------------------------------------------------------------------------------
+void SerialCmdHandler::cmdMenu(void)
+{
+    err("<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>");
+    err("");
+    err("Options:");
+    err("  -h, --help                 Print this help message");
+    err("  -b, --baud=baudrate        Baudrate (bps) of Arduino (default 9600)");
+    err("  -p, --port=serialport      Serial port Arduino is connected to");
+    err("  -r, --receive              Receive string from Arduino & print it out");
+    err("  -F  --flush                Flush serial port buffers for fresh reading");
+    err("  -q  --quiet                Don't print out as much info");
+    err("<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>");
+    err("\n");
 }
 
 //------------------------------------------------------------------------------
@@ -41,45 +63,78 @@ void SerialCmdHandler::processCmdChannel()
 
     if (argOk)
     {
-        Serial.printf("USBMUX Channel number: %d\r\n", chNum);
+        dbg("USBMUX Channel number: %d\r\n", chNum);
     }
     else
     {
-        Serial.println("No USBMUX Channel number arguments");
+        err("No USBMUX Channel number argument");
         return;
     }
 
     bool usbIdState = readBoolArg();
     if (argOk)
     {
-        Serial.printf("USBMUX usb_id state: %d\r\n", usbIdState);
+        dbg("USBMUX usb_id state: %d\r\n", usbIdState);
     }
     else
     {
-        Serial.println("No USBMUX usb_id second argument");
+        err("No USBMUX usb_id second argument");
         return;
     }
 
+    // Validate the input data
     CmdSetChannelMsg msg((UsbMuxDriver::UsbChannelNumber)chNum,
-                        (UsbMuxDriver::UsbIdState)usbIdState);
+                         (UsbMuxDriver::UsbIdState)usbIdState);
     m_cmdr.processCmdMsg(msg);
 }
 
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdPower() 
 {
-    bool pwrRelayState = readBoolArg();
-    if (argOk)
+    CmdSetRelayMsg msg;
+
+    // Read command
+    if (compareCheckStringArg("r"))
     {
-        Serial.printf("PowerRelay state: %d\r\n", pwrRelayState);
+        // Drop 'r' command
+        readStringArg();
+        msg.reset = true;
+        
+        uint32_t timeout = readIntArg();
+        if (argOk)
+        {
+            const uint32_t maxTimeout = 30000;
+            if (timeout > maxTimeout)
+            {
+                inf("PowerRelay reset timeout changed to max value: %d[ms]\r\n", timeout);
+                timeout = maxTimeout;
+            }
+            msg.resetTimeoutMs = timeout;
+            dbg("PowerRelay reset timeout: %d[ms]\r\n", timeout);
+        }
+        else
+        {
+            inf("No PowerRelay timeout argument applied");
+        }
+        
     }
     else
     {
-        Serial.println("No PowerRelay argument applied");
-        return;
+        const bool pwrRelayState = readIntArg();
+        if (argOk)
+        {
+            msg.relayState = (pwrRelayState == false) ? \
+                                PowerRelay::RelayState::RELAY_OFF : \
+                                PowerRelay::RelayState::RELAY_ON;
+            dbg("PowerRelay state: %d\r\n", pwrRelayState);
+        }
+        else
+        {
+            wrn("No PowerRelay argument applied");
+            return;
+        }
     }
 
-    CmdSetRelayMsg msg((PowerRelay::RelayState)pwrRelayState);
     m_cmdr.processCmdMsg(msg);
 }
 
@@ -91,4 +146,10 @@ void SerialCmdHandler::processCmdWifi()
 
 
 //------------------------------------------------------------------------------
+void SerialCmdHandler::processCmdUnrecognized()
+{
+    wrn("Non recognized USBMUX command");
+}
 
+
+//------------------------------------------------------------------------------

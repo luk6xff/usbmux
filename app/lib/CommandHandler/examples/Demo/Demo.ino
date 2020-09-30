@@ -20,7 +20,7 @@ void setup() {
   cmdHdl.addCommand("HELLO", sayHello);        // Echos the string argument back
   cmdHdl.addCommand("FWD",   forwardRemaining);// Fwd the remaining of the command to the cmdHdl
   cmdHdl.addCommand("P",     processCommand);  // Converts two arguments, first to double and echos them back
-  cmdHdl.addCommand("GUESS", guessMyName);     // A game for guessing my name, used to test compareStringArg
+  cmdHdl.addCommand("GUESS", guessMyName);     // A game for guessing my name, used to test compareCheckStringArg
   cmdHdl.addCommand("PING", pongMesssage);     // A function that use the packet forging tool to send a random ping time
   cmdHdl.setDefaultHandler(unrecognized);      // Handler for command that isn't matched  (says "What?")
 
@@ -153,7 +153,7 @@ void processCommand() {
 }
 
 void guessMyName() {
-  if (cmdHdl.compareStringArg("Jonathan")) {
+  if (cmdHdl.compareCheckStringArg("Jonathan")) {
     Serial.println("Yes! My name is Jonathan");
   }
   else {
