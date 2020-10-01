@@ -2,13 +2,6 @@
 USB 2.0 multiplexer based on TS3USB221 module from TI
 
 
-
-## Pinout
-* HW pinout defined at: `usbmux/app/src/hw_config.h`
-* Board connector pinout:
-![usbmux_board_pinout](docs/pics/usbmux_board_pinout.jpg)
-
-
 ## Instalation
 * Install `vscode` with `platformio` plugin (Versions: vscode[1.49.2], platformio[Core:5.0.1, Home:3.3.0])
 
@@ -31,6 +24,22 @@ platformio run --target upload
 # All in one-liner
 platformio run  &&  platformio run --target buildfs --environment d1_mini  &&  platformio run --target uploadfs --environment d1_mini  &&  platformio run --target upload
 ```
+
+## Pinout
+* HW pinout defined at: `usbmux/app/src/hw_config.h`
+* Board connector pinout:
+![usbmux_board_pinout](docs/pics/usbmux_board_pinout.jpg)
+
+
+## More random pics
+
+* Completed device:
+![usbmux_completed](docs/pics/usbmux_completed.jpg)
+
+* Web server:
+![usbmux_web1](docs/pics/usbmux_web1.png)
+![usbmux_web2](docs/pics/usbmux_web2.png)
+
 
 ## BOM
 obudowa z-23
