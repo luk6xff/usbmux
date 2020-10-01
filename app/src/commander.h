@@ -83,15 +83,18 @@ class CmdSetChannelMsg : public CommandMsgBase<CmdSetChannelMsg>
 
 public:
     CmdSetChannelMsg(UsbMuxDriver::UsbChannelNumber chNum,
-                     UsbMuxDriver::UsbIdState idState=UsbMuxDriver::UsbIdState::USB_ID_HIGH)
+                     UsbMuxDriver::UsbIdState idState=UsbMuxDriver::UsbIdState::USB_ID_HIGH,
+                     bool disable=false)
         : channelNumber(chNum)
         , usbIdState(idState)
+        , disableChannels(disable)
     {
     }
 
 public:
     UsbMuxDriver::UsbChannelNumber channelNumber;
-    UsbMuxDriver::UsbIdState usbIdState; 
+    UsbMuxDriver::UsbIdState usbIdState;
+    bool disableChannels;
 };
 
 

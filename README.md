@@ -27,6 +27,9 @@ platformio run --target uploadfs --environment d1_mini
 
 # Upload the application binary
 platformio run --target upload
+
+# All in one-liner
+platformio run  &&  platformio run --target buildfs --environment d1_mini  &&  platformio run --target uploadfs --environment d1_mini  &&  platformio run --target upload
 ```
 
 ## BOM

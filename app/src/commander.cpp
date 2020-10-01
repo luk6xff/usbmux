@@ -16,7 +16,14 @@ CmdHandler::CmdHandler()
 void CmdHandler::handle(CmdSetChannelMsg& msg)
 {
     dbg("CmdSetChannelMsg handler: %s\r\n", __func__);
-    m_usbMux.enableChannel(msg.channelNumber, msg.usbIdState);
+    if (msg.disableChannels)
+    {
+        m_usbMux.disableAll();   
+    }
+    else
+    {
+        m_usbMux.enableChannel(msg.channelNumber, msg.usbIdState);
+    }
 }
 
 //------------------------------------------------------------------------------

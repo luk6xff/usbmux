@@ -112,121 +112,99 @@ void DevServer::handleNotFound()
 void DevServer::handleUpdateUsbMuxGpio()
 {
     String usbMuxPin = server.arg("pin");
-    String usbMuxPinState = server.arg("state");
+    String usbMuxPinState = server.arg("pinstate");
     String usbIdPinState = server.arg("usbidstate");
     String success = "true";
 
+    typedef enum
+    {
+        CH_0  = 0,
+        CH_1  = 1,
+        POWER = 2,
+    } CommandId;
+
     const std::map<String, int> validTable =
     {
-        {"CH_0",     0},
-        {"CH_1",     1},
-        {"POWER",    2},
+        {"ch_0",     CH_0},
+        {"ch_1",     CH_1},
+        {"power",    POWER},
     };
     dbg("COMMAND: %s, %s, %s", usbMuxPin.c_str(), usbMuxPinState.c_str(), usbIdPinState.c_str());
     auto pinSearch = validTable.find(usbMuxPin);
     if (pinSearch != validTable.end())
     {
-
-        switch (pinSearch->second)
+        if (pinSearch->second == CH_0 || pinSearch->second == CH_1)
         {
-            case 0:
+            CmdSetChannelMsg msg(UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_0);
+            if (pinSearch->second == CH_1)
             {
-                CmdSetChannelMsg msg(UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_0);
-                if (usbMuxPinState == "on")
+                msg.channelNumber = UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_1;
+            }
+            
+            if (usbMuxPinState == "on")
+            {
+                if (usbIdPinState == "true")
                 {
-                    if (usbIdPinState == "1")
-                    {
-                        msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_HIGH;
-                    }
-                    else
-                    {
-                        msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_LOW;
-                    }
-                }
-                else if (usbMuxPinState == "off")
-                {
-                    dbg("USBMUX Sleep mode");
-                    //usbMux.disableAll();
+                    msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_HIGH;
                 }
                 else
                 {
-                    success = "false";
+                    msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_LOW;
                 }
-
-                m_cmdr.processCmdMsg(msg);
-                break;
             }
-
-            case 1:
+            else if (usbMuxPinState == "off")
             {
-                CmdSetChannelMsg msg(UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_1);
-                if (usbMuxPinState == "on")
-                {
-                    if (usbIdPinState == "1")
-                    {
-                        msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_HIGH;
-                    }
-                    else
-                    {
-                        msg.usbIdState = UsbMuxDriver::UsbIdState::USB_ID_LOW;
-                    }
-                }
-                else if (usbMuxPinState == "off")
-                {
-                    dbg("USBMUX Sleep mode");
-                    //usbMux.disableAll();
-                }
-                else
-                {
-                    success = "false";
-                }
-
-                m_cmdr.processCmdMsg(msg);
-                break;
+                dbg("USBMUX Sleep mode");
+                msg.disableChannels = true;
             }
-
-            case 2:
-            {
-                if (usbMuxPinState == "off")
-                {
-                    dbg("PowerRelay disabled!");
-                    CmdSetRelayMsg msg(PowerRelay::RelayState::RELAY_OFF);
-                    m_cmdr.processCmdMsg(msg);
-                }
-                else if (usbMuxPinState == "on")
-                {
-                    dbg("PowerRelay enabled!");
-                    // Enable relay
-                    CmdSetRelayMsg msg(PowerRelay::RelayState::RELAY_ON);
-                    m_cmdr.processCmdMsg(msg);
-                }
-                else
-                {
-                    success = "false";
-                }
-                break;
-            }
-
-            default:
+            else
             {
                 success = "false";
-                break;
+            }
+
+            // Execute only on success
+            if (success == "true")
+            {
+                m_cmdr.processCmdMsg(msg);
+            }
+        }
+        
+        else if (pinSearch->second == POWER)
+        {
+            CmdSetRelayMsg msg;
+            if (usbMuxPinState == "off")
+            {
+                dbg("PowerRelay disabling...");
+                msg.relayState = PowerRelay::RelayState::RELAY_OFF;
+
+            }
+            else if (usbMuxPinState == "on")
+            {
+                dbg("PowerRelay enabling...");
+                // Enable relay
+                msg.relayState = PowerRelay::RelayState::RELAY_ON;
+            }
+            else
+            {
+                success = "false";
+            }
+            
+            // Execute only on success
+            if (success == "true")
+            {
+                m_cmdr.processCmdMsg(msg);
             }
         }
     }
     else
     {
         success = "false";
+        err("Invalid USBMUX command!");
     }
-
-    if (success == false)
-    {
-        dbg("Setting USBMUX pin value failed!");
-    }
-
 
     String json = "{\"usbmux\":\"" + String(usbMuxPin) + "\",";
-    json += "\"state\":\"" + String(usbMuxPinState) + "\",";
+    json += "\"pinstate\":\"" + String(usbMuxPinState) + "\",";
+    json += "\"usbidstate\":\"" + String(usbMuxPinState) + "\",";
     json += "\"success\":\"" + String(success) + "\"}";
 
     server.send(200, "application/json", json);
