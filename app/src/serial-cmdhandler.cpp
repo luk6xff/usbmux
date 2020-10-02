@@ -36,7 +36,8 @@ void SerialCmdHandler::setCommands()
                             {"h",   std::bind(&SerialCmdHandler::cmdMenu, this)},
                             {"ch",  std::bind(&SerialCmdHandler::processCmdChannel, this)},
                             {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
-                            {"wf",  std::bind(&SerialCmdHandler::processCmdWifi, this)}
+                            {"wf",  std::bind(&SerialCmdHandler::processCmdWifi, this)},
+                            {"r",   std::bind(&SerialCmdHandler::processCmdReset, this)},
                             };
 }
 
@@ -46,12 +47,12 @@ void SerialCmdHandler::cmdMenu(void)
     err("<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>");
     err("");
     err("Options:");
-    err("  -h, --help                 Print this help message");
-    err("  -b, --baud=baudrate        Baudrate (bps) of Arduino (default 9600)");
-    err("  -p, --port=serialport      Serial port Arduino is connected to");
-    err("  -r, --receive              Receive string from Arduino & print it out");
-    err("  -F  --flush                Flush serial port buffers for fresh reading");
-    err("  -q  --quiet                Don't print out as much info");
+    err("  h;                   Print the help message");
+    err("  ch;[[0/1];[0/1]][d]  Set usbmux channel [[0/1-Channel number][0/1-UsbID for a given channel]][d-Disable all channels]");
+    err("  pwr;[0/1][r;(X)]     Set power relay state[0/1-Off/On][r-reset(X-reset timeout value)]");
+    err("  wf;[X];[ssid];[pass] Set Wifi Module - Store access data for a wifi AP");
+    err("  inf;                 Print device information data");
+    err("  r;                   Reboot the module");
     err("<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>");
     err("\n");
 }
@@ -59,32 +60,43 @@ void SerialCmdHandler::cmdMenu(void)
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdChannel()
 {
-    uint8_t chNum = readIntArg();
 
-    if (argOk)
+    CmdSetChannelMsg msg;
+
+    // Read command
+    if (compareCheckStringArg("d"))
     {
-        dbg("USBMUX Channel number: %d\r\n", chNum);
+        // Drop 'd' command
+        readStringArg();
+        msg.disableChannels = true;
     }
     else
     {
-        err("No USBMUX Channel number argument");
-        return;
+        uint8_t chNum = readIntArg();
+        if (argOk)
+        {
+            dbg("USBMUX Channel number: %d\r\n", chNum);
+            msg.channelNumber = (UsbMuxDriver::UsbChannelNumber)chNum;
+        }
+        else
+        {
+            err("No USBMUX Channel number argument");
+            return;
+        }
+
+        bool usbIdState = readBoolArg();
+        if (argOk)
+        {
+            dbg("USBMUX usb_id state: %d\r\n", usbIdState);
+            msg.usbIdState = (UsbMuxDriver::UsbIdState)usbIdState;
+        }
+        else
+        {
+            err("No USBMUX usb_id second argument");
+            return;
+        }
     }
 
-    bool usbIdState = readBoolArg();
-    if (argOk)
-    {
-        dbg("USBMUX usb_id state: %d\r\n", usbIdState);
-    }
-    else
-    {
-        err("No USBMUX usb_id second argument");
-        return;
-    }
-
-    // Validate the input data
-    CmdSetChannelMsg msg((UsbMuxDriver::UsbChannelNumber)chNum,
-                         (UsbMuxDriver::UsbIdState)usbIdState);
     m_cmdr.processCmdMsg(msg);
 }
 
@@ -141,7 +153,47 @@ void SerialCmdHandler::processCmdPower()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdWifi()
 {
+    CmdSetWifiConfigMsg msg;
+ 
+    const uint8_t wifiId  = readIntArg();
+    if (argOk)
+    {
+        msg.wifiId = wifiId;
+        String ssid = readStringArg();
+        if (argOk)
+        {
+            msg.wifiSsid = ssid; 
+            String pass = readStringArg();
+            if (argOk)
+            {
+                msg.wifiPass = pass; 
+            }
+            else
+            {
+                err("No WifiPass argument applied");
+                return;
+            }
+        }
+        else
+        {
+            err("No WifiSsid argument applied");
+            return;
+        }
+    }
+    else
+    {
+        err("No WifiId argument applied");
+        return;
+    }
+    m_cmdr.processCmdMsg(msg);
+}
 
+
+//------------------------------------------------------------------------------
+void SerialCmdHandler::processCmdReset()
+{
+    CmdDeviceResetMsg msg;
+    m_cmdr.processCmdMsg(msg);
 }
 
 

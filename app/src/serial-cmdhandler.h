@@ -27,6 +27,7 @@ private:
     void processCmdChannel();
     void processCmdPower();
     void processCmdWifi();
+    void processCmdReset();
     void processCmdUnrecognized();
 
 private:

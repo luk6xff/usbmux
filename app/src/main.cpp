@@ -1,5 +1,5 @@
 #include "utils.h"
-
+#include "app-settings.h"
 #include "dev-server.h"
 #include "serial-cmdhandler.h"
 
@@ -12,6 +12,7 @@ static SerialCmdHandler serCmdHandler(cmdr);
 
 void setup()
 {
+    AppSettings::instance().init();
     utils::init();
     server.init();
 }

@@ -16,7 +16,7 @@ class CommandMsg;
 class CmdSetChannelMsg;
 class CmdSetRelayMsg;
 class CmdSetWifiConfigMsg;
-
+class CmdDeviceResetMsg;
 
 
 
@@ -30,6 +30,7 @@ public:
     void handle(CmdSetChannelMsg& msg);
     void handle(CmdSetRelayMsg& msg);
     void handle(CmdSetWifiConfigMsg& msg);
+    void handle(CmdDeviceResetMsg& msg);
     void handle(CommandMsg& msg);
 
 private:
@@ -82,7 +83,7 @@ class CmdSetChannelMsg : public CommandMsgBase<CmdSetChannelMsg>
 {
 
 public:
-    CmdSetChannelMsg(UsbMuxDriver::UsbChannelNumber chNum,
+    CmdSetChannelMsg(UsbMuxDriver::UsbChannelNumber chNum=UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_INVALID,
                      UsbMuxDriver::UsbIdState idState=UsbMuxDriver::UsbIdState::USB_ID_HIGH,
                      bool disable=false)
         : channelNumber(chNum)
@@ -129,9 +130,31 @@ public:
 //------------------------------------------------------------------------------
 class CmdSetWifiConfigMsg : public CommandMsgBase<CmdSetWifiConfigMsg>
 {
+public:
+    CmdSetWifiConfigMsg(uint8_t id=0, String ssid="", String pass="",
+                        bool read=false, bool reconnect=false)
+    : wifiId(id)
+    , wifiSsid(ssid)
+    , wifiPass(pass)
+    , wifiRead(read)
+    , wifiReconnect(reconnect)
+    {
+    }
 
+public:
+    uint8_t wifiId;
+    String wifiSsid;
+    String wifiPass;
+    bool wifiRead;
+    bool wifiReconnect;
 };
 
+//------------------------------------------------------------------------------
+class CmdDeviceResetMsg : public CommandMsgBase<CmdDeviceResetMsg>
+{
+public:
+    CmdDeviceResetMsg() = default;
+};
 
 
 

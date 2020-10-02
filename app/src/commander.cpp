@@ -1,5 +1,7 @@
 #include "commander.h"
+#include "app-settings.h"
 #include "hw_config.h"
+#include "Esp.h"
 #include "utils.h"
 
 
@@ -52,6 +54,21 @@ void CmdHandler::handle(CmdSetRelayMsg& msg)
 void CmdHandler::handle(CmdSetWifiConfigMsg& msg)
 {
     dbg("CmdSetWifiConfigMsg handler: %s\r\n", __func__);
+    if (msg.wifiId >= WIFI_SETTINGS_CH_NUM)
+    {
+        err("Too big wifi channel number: %d\r\n", WIFI_SETTINGS_CH_NUM);
+        return;
+    }
+    AppSettings::WifiSettings ws;
+    memcpy(&ws.ssid, msg.wifiSsid.c_str(), WIFI_SETTINGS_LEN);
+    memcpy(&ws.pass, msg.wifiPass.c_str(), WIFI_SETTINGS_LEN);
+    AppSettings::instance().storeWifiData(msg.wifiId, ws);
+}
+
+//------------------------------------------------------------------------------
+void CmdHandler::handle(CmdDeviceResetMsg& msg)
+{
+    ESP.restart();
 }
 
 //------------------------------------------------------------------------------

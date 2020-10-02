@@ -32,10 +32,8 @@ platformio run  &&  platformio run --target buildfs --environment d1_mini  &&  p
 
 
 ## More random pics
-
 * Completed device:
 ![usbmux_completed](docs/pics/usbmux_completed.jpg)
-
 * Web server:
 ![usbmux_web1](docs/pics/usbmux_web1.png)
 ![usbmux_web2](docs/pics/usbmux_web2.png)
