@@ -93,7 +93,7 @@ void Arduino_DebugUtils::print(int const debug_level, const __FlashStringHelper 
  ******************************************************************************/
 
 void Arduino_DebugUtils::vPrint(char const * fmt, va_list args) {
-  static size_t const MSG_BUF_SIZE = 120;
+  static size_t const MSG_BUF_SIZE = 512;
   char msg_buf[MSG_BUF_SIZE] = {0};
 
   vsnprintf(msg_buf, MSG_BUF_SIZE, fmt, args);

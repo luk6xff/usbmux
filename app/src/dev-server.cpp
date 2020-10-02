@@ -1,7 +1,7 @@
 
 #include "dev-server.h"
-#include "secret_data.h"
 #include "utils.h"
+#include "app-settings.h"
 
 //------------------------------------------------------------------------------
 const char *DevServer::k_hostName   = "usbmux";
@@ -9,61 +9,62 @@ const int   DevServer::k_serverPort = 80;
 
 //------------------------------------------------------------------------------
 DevServer::DevServer(Commander& cmdr)
-    : ssid(STASSID)
-    , password(STAPSK)
-    , server(k_serverPort)
+    : server(k_serverPort)
     , fileSystem(&LittleFS)
     , fileSystemConfig(LittleFSConfig())
     , m_cmdr(cmdr)
 {
-
 }
 
 //------------------------------------------------------------------------------
 void DevServer::init()
 {
+    WiFi.setAutoConnect(0);
     if (connectToAP())
     {
-        dbg("\nConnected to: %s\nIP address:\t %s", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
-    }
+        inf("\nConnected to: %s\nIP address:\t %s", WiFi.SSID().c_str(), WiFi.localIP().toString().c_str());
+        if (!LittleFS.begin())
+        {
+            // Sth bad happened
+            err("LittleFS Mount failed");
+        }
+        else
+        {
+            inf("LittleFS Mount succesfull");
+        }
 
-    if (!LittleFS.begin())
-    {
-        // Sth bad happened
-        dbg("LittleFS Mount failed");
+        server.on("/devinfotable.json", std::bind(&DevServer::handleCreateDevInfoTable, this));
+        server.on("/devinfo.json",std::bind(&DevServer::handleSendDevInfo, this));
+        server.on("/usbmux", std::bind(&DevServer::handleUpdateUsbMuxGpio, this));
+
+        server.serveStatic("/js", LittleFS, "/js");
+        server.serveStatic("/css", LittleFS, "/css");
+        server.serveStatic("/img", LittleFS, "/img");
+        server.serveStatic("/", LittleFS, "/index.html");
+
+        // Start the mDNS responder for usbmux
+        if (MDNS.begin(k_hostName))
+        {
+            inf("mDNS responder started");
+        }
+        else
+        {
+            err("Error setting up MDNS responder!");
+        }
+
+        server.onNotFound(std::bind(&DevServer::handleNotFound, this));
+
+        // Start the server
+        server.begin();
+        inf("HTTP server started");
+
+        // Add service to MDNS-SD
+        MDNS.addService("http", "tcp", 80);
     }
     else
     {
-        dbg("LittleFS Mount succesfull");
+        err("Error - Cannot connect to AP!");
     }
-
-    server.on("/devinfotable.json", std::bind(&DevServer::handleCreateDevInfoTable, this));
-    server.on("/devinfo.json",std::bind(&DevServer::handleSendDevInfo, this));
-    server.on("/usbmux", std::bind(&DevServer::handleUpdateUsbMuxGpio, this));
-
-    server.serveStatic("/js", LittleFS, "/js");
-    server.serveStatic("/css", LittleFS, "/css");
-    server.serveStatic("/img", LittleFS, "/img");
-    server.serveStatic("/", LittleFS, "/index.html");
-
-    // Start the mDNS responder for usbmux
-    if (MDNS.begin(k_hostName))
-    {
-        dbg("mDNS responder started");
-    }
-    else
-    {
-        dbg("Error setting up MDNS responder!");
-    }
-
-    server.onNotFound(std::bind(&DevServer::handleNotFound, this));
-
-    // Start the server
-    server.begin();
-    dbg("HTTP server started");
-
-    // Add service to MDNS-SD
-    MDNS.addService("http", "tcp", 80);
 }
 
 //------------------------------------------------------------------------------
@@ -78,21 +79,24 @@ bool DevServer::connectToAP()
 {
     int tries = 0;
     bool connected = true;
-    wifiMulti.addAP(ssid.c_str(), password.c_str());
-    wifiMulti.addAP("ssid_ap2", "passwd_ap2");
-    wifiMulti.addAP("ssid_ap3", "passwd_ap3");
+    wifiMulti.addAP(AppSettings::instance().getCurrent().wifi0.ssid,
+                    AppSettings::instance().getCurrent().wifi0.pass);
+    wifiMulti.addAP(AppSettings::instance().getCurrent().wifi1.ssid,
+                    AppSettings::instance().getCurrent().wifi1.pass);
+    wifiMulti.addAP(AppSettings::instance().getCurrent().wifi2.ssid,
+                    AppSettings::instance().getCurrent().wifi2.pass);
 
-    dbg("Connecting ...");
+    inf("Connecting ...");
     while (wifiMulti.run() != WL_CONNECTED)
     {
         // Wait for the Wi-Fi to connect: scan for Wi-Fi networks, and connect to the strongest network
-        delay(500);
+        delay(100);
         tries++;
-        dbg(".");
-        // 10 seconds timeout
-        if (tries > 20)
+        inf(".");
+        // 5 seconds timeout
+        if (tries > 50)
         {
-            dbg("Connecting to AP failed!!!");
+            err("Connecting to AP failed!!!");
             connected = false;
             break;
         }
@@ -129,7 +133,7 @@ void DevServer::handleUpdateUsbMuxGpio()
         {"ch_1",     CH_1},
         {"power",    POWER},
     };
-    dbg("COMMAND: %s, %s, %s", usbMuxPin.c_str(), usbMuxPinState.c_str(), usbIdPinState.c_str());
+    inf("COMMAND: %s, %s, %s", usbMuxPin.c_str(), usbMuxPinState.c_str(), usbIdPinState.c_str());
     auto pinSearch = validTable.find(usbMuxPin);
     if (pinSearch != validTable.end())
     {
@@ -174,13 +178,13 @@ void DevServer::handleUpdateUsbMuxGpio()
             CmdSetRelayMsg msg;
             if (usbMuxPinState == "off")
             {
-                dbg("PowerRelay disabling...");
+                inf("PowerRelay disabling...");
                 msg.relayState = PowerRelay::RelayState::RELAY_OFF;
 
             }
             else if (usbMuxPinState == "on")
             {
-                dbg("PowerRelay enabling...");
+                inf("PowerRelay enabling...");
                 // Enable relay
                 msg.relayState = PowerRelay::RelayState::RELAY_ON;
             }
@@ -208,7 +212,7 @@ void DevServer::handleUpdateUsbMuxGpio()
     json += "\"success\":\"" + String(success) + "\"}";
 
     server.send(200, "application/json", json);
-    dbg("USBMUX GPIO pin:%s has changed to state:%s!\n", usbMuxPin.c_str(), usbMuxPinState.c_str());
+    inf("USBMUX GPIO pin:%s has changed to state:%s!\n", usbMuxPin.c_str(), usbMuxPinState.c_str());
 }
 
 //------------------------------------------------------------------------------

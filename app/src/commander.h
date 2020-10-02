@@ -8,16 +8,13 @@
 #include "power-relay.h"
 
 
-
-
-
 ///< Forward declaration of Actual Command classes
 class CommandMsg;
 class CmdSetChannelMsg;
 class CmdSetRelayMsg;
 class CmdSetWifiConfigMsg;
+class CmdDeviceInfoMsg;
 class CmdDeviceResetMsg;
-
 
 
 /**
@@ -30,6 +27,7 @@ public:
     void handle(CmdSetChannelMsg& msg);
     void handle(CmdSetRelayMsg& msg);
     void handle(CmdSetWifiConfigMsg& msg);
+    void handle(CmdDeviceInfoMsg& msg);
     void handle(CmdDeviceResetMsg& msg);
     void handle(CommandMsg& msg);
 
@@ -148,6 +146,15 @@ public:
     bool wifiRead;
     bool wifiReconnect;
 };
+
+
+//------------------------------------------------------------------------------
+class CmdDeviceInfoMsg : public CommandMsgBase<CmdDeviceInfoMsg>
+{
+public:
+    CmdDeviceInfoMsg() = default;
+};
+
 
 //------------------------------------------------------------------------------
 class CmdDeviceResetMsg : public CommandMsgBase<CmdDeviceResetMsg>

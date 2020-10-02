@@ -9,15 +9,16 @@ AppSettings::AppSettings()
     defaultSettings =
     {
         .magic = 0x4C554B36,  // LUK6
-        .version = 0x00000001,
+        .version = 0x00000002,
     };
 
     WifiSettings wifiDefault;
+    // Clear wifi default settings
+    memset(&wifiDefault.ssid, 0, sizeof(wifiDefault.ssid));
+    memset(&wifiDefault.pass, 0, sizeof(wifiDefault.pass));
     memcpy(wifiDefault.ssid, "admin", strlen("admin"));
     memcpy(wifiDefault.pass, "admin", strlen("admin"));
-    //memcpy(&defaultSettings.wifi0, &wifiDefault, sizeof(wifiDefault));
-    //memcpy(&defaultSettings.wifi1, &wifiDefault, sizeof(wifiDefault));
-    //memcpy(&defaultSettings.wifi2, &wifiDefault, sizeof(wifiDefault));
+    // Assign defaults
     defaultSettings.wifi0 = wifiDefault;
     defaultSettings.wifi1 = wifiDefault;
     defaultSettings.wifi2 = wifiDefault;

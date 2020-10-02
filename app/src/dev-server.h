@@ -50,12 +50,6 @@ private:
 
 private:
 
-    /**
-     * @brief Relay on/off pin
-     */
-    String ssid;
-    String password;
-
     ESP8266WiFiMulti wifiMulti;
     ESP8266WebServer server;
     FS *fileSystem;

@@ -13,10 +13,16 @@ struct InfoValue
     {
     }
 
-    String toJson()
+    String toServerJson()
     {
         String json = "{\"name\":\""+ m_name + "\",\"value\":\"" + m_value + "\",\"unit\":\"" + m_unit + "\",\"glyph\":\"" + m_glyphIcon + "\"}";
         return json;
+    }
+
+    String toValueString()
+    {
+        String val = m_name + ": " + m_value + " " + m_unit;
+        return val;
     }
 
 public:
@@ -55,6 +61,7 @@ class DeviceInfo
 public:
     explicit DeviceInfo();
 
+    String latest();
     String createDevInfoTable();
     String createDynamicDevInfo();
 

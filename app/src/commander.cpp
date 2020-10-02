@@ -2,6 +2,7 @@
 #include "app-settings.h"
 #include "hw_config.h"
 #include "Esp.h"
+#include "device-info.h"
 #include "utils.h"
 
 
@@ -66,8 +67,16 @@ void CmdHandler::handle(CmdSetWifiConfigMsg& msg)
 }
 
 //------------------------------------------------------------------------------
+void CmdHandler::handle(CmdDeviceInfoMsg& msg)
+{
+    DeviceInfo info;
+    inf(info.latest().c_str());
+}
+
+//------------------------------------------------------------------------------
 void CmdHandler::handle(CmdDeviceResetMsg& msg)
 {
+    inf("Device restarting...");
     ESP.restart();
 }
 

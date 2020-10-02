@@ -1,5 +1,3 @@
-#pragma once
-
 #include "device-info.h"
 
 DeviceInfo::DeviceInfo()
@@ -21,22 +19,43 @@ DeviceInfo::DeviceInfo()
 }
 
 //------------------------------------------------------------------------------
+String DeviceInfo::latest()
+{
+    String res = "<<<DeviceInfo>>>\r\n";
+    res += buildAuthor.toValueString() + "\r\n"
+            + buildDate.toValueString() + "\r\n"
+            + buildTime.toValueString() + "\r\n"
+            + vcc.toValueString() + "\r\n"
+            + chipId.toValueString() + "\r\n"
+            + fullVersion.toValueString() + "\r\n"
+            + bootVersion.toValueString() + "\r\n"
+            + cpuFreqMhz.toValueString() + "\r\n"
+            + resetInfo.toValueString() + "\r\n"
+            + flashChipRealSize.toValueString() + "\r\n"
+            + appSize.toValueString() + "\r\n"
+            + freeHeap.toValueString() + "\r\n"
+            + freeStack.toValueString();
+    res += "\r\n";
+    return res;
+}
+
+//------------------------------------------------------------------------------
 String DeviceInfo::createDevInfoTable()
 {
     String json = "[";
-    json += buildAuthor.toJson() + ","
-            + buildDate.toJson() + ","
-            + buildTime.toJson() + ","
-            + vcc.toJson() + ","
-            + chipId.toJson() + ","
-            + fullVersion.toJson() + ","
-            + bootVersion.toJson() + ","
-            + cpuFreqMhz.toJson() + ","
-            + resetInfo.toJson() + ","
-            + flashChipRealSize.toJson() + ","
-            + appSize.toJson() + ","
-            + freeHeap.toJson() + ","
-            + freeStack.toJson();
+    json += buildAuthor.toServerJson() + ","
+            + buildDate.toServerJson() + ","
+            + buildTime.toServerJson() + ","
+            + vcc.toServerJson() + ","
+            + chipId.toServerJson() + ","
+            + fullVersion.toServerJson() + ","
+            + bootVersion.toServerJson() + ","
+            + cpuFreqMhz.toServerJson() + ","
+            + resetInfo.toServerJson() + ","
+            + flashChipRealSize.toServerJson() + ","
+            + appSize.toServerJson() + ","
+            + freeHeap.toServerJson() + ","
+            + freeStack.toServerJson();
     json += "]";
     return json;
 }
@@ -44,8 +63,6 @@ String DeviceInfo::createDevInfoTable()
 //------------------------------------------------------------------------------
 String DeviceInfo::createDynamicDevInfo()
 {
-    //String json = "{\"free_heap\":\"" + String(devInfo.freeHeap) + "\",";
-    //json += "\"free_stack\":\"" + String(devInfo.freeStack) + "\"}";
     String json = "{" + freeHeap.name() + ":" + freeHeap.val() + "\","
                 + freeStack.name() + ":" + freeStack.val()
                 + "}";

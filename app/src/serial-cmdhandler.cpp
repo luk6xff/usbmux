@@ -4,7 +4,7 @@
 
 //------------------------------------------------------------------------------
 #define SERIAL_CMD_HANDLER_DELIM ";"
-#define SERIAL_CMD_HANDLER_TERM '\r'
+#define SERIAL_CMD_HANDLER_TERM '\n'
 
 
 //------------------------------------------------------------------------------
@@ -37,6 +37,7 @@ void SerialCmdHandler::setCommands()
                             {"ch",  std::bind(&SerialCmdHandler::processCmdChannel, this)},
                             {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
                             {"wf",  std::bind(&SerialCmdHandler::processCmdWifi, this)},
+                            {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
                             {"r",   std::bind(&SerialCmdHandler::processCmdReset, this)},
                             };
 }
@@ -44,16 +45,22 @@ void SerialCmdHandler::setCommands()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::cmdMenu(void)
 {
-    err("<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>");
+    err("<<<<<<<<<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>>>");
     err("");
     err("Options:");
-    err("  h;                   Print the help message");
-    err("  ch;[[0/1];[0/1]][d]  Set usbmux channel [[0/1-Channel number][0/1-UsbID for a given channel]][d-Disable all channels]");
-    err("  pwr;[0/1][r;(X)]     Set power relay state[0/1-Off/On][r-reset(X-reset timeout value)]");
-    err("  wf;[X];[ssid];[pass] Set Wifi Module - Store access data for a wifi AP");
-    err("  inf;                 Print device information data");
-    err("  r;                   Reboot the module");
-    err("<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>");
+    err(" h;                Print the help message");
+    err(" ch;[n;id][d]      Set usbmux channel:");
+    err("                      n-Channel number(0-1)");
+    err("                      id-UsbID for a given channel(0-1)");
+    err("                      d-Disable all channels]");
+    err(" pwr;[x;][r;(y)]   Set power relay state:");
+    err("                      x-Off/On(0-1); r-reset; y-reset timeout value");
+    err(" wf;[x;ssid;pass]  Set device wifi AP - Store access data for a wifi AP:");
+    err("                      x-wifi channel(0-2)");
+    err("                      ssid-wifi ssid, pass- wifi AP passwd");
+    err(" inf;              Print device information data");
+    err(" r;                Reboot the device");
+    err("<<<<<<<<<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>>>");
     err("\n");
 }
 
@@ -75,7 +82,7 @@ void SerialCmdHandler::processCmdChannel()
         uint8_t chNum = readIntArg();
         if (argOk)
         {
-            dbg("USBMUX Channel number: %d\r\n", chNum);
+            inf("USBMUX Channel number: %d\r\n", chNum);
             msg.channelNumber = (UsbMuxDriver::UsbChannelNumber)chNum;
         }
         else
@@ -87,7 +94,7 @@ void SerialCmdHandler::processCmdChannel()
         bool usbIdState = readBoolArg();
         if (argOk)
         {
-            dbg("USBMUX usb_id state: %d\r\n", usbIdState);
+            inf("USBMUX usb_id state: %d\r\n", usbIdState);
             msg.usbIdState = (UsbMuxDriver::UsbIdState)usbIdState;
         }
         else
@@ -122,7 +129,7 @@ void SerialCmdHandler::processCmdPower()
                 timeout = maxTimeout;
             }
             msg.resetTimeoutMs = timeout;
-            dbg("PowerRelay reset timeout: %d[ms]\r\n", timeout);
+            inf("PowerRelay reset timeout: %d[ms]\r\n", timeout);
         }
         else
         {
@@ -138,7 +145,7 @@ void SerialCmdHandler::processCmdPower()
             msg.relayState = (pwrRelayState == false) ? \
                                 PowerRelay::RelayState::RELAY_OFF : \
                                 PowerRelay::RelayState::RELAY_ON;
-            dbg("PowerRelay state: %d\r\n", pwrRelayState);
+            inf("PowerRelay state: %d\r\n", pwrRelayState);
         }
         else
         {
@@ -185,9 +192,17 @@ void SerialCmdHandler::processCmdWifi()
         err("No WifiId argument applied");
         return;
     }
+    inf("New Wifi AP data will be stored - channel:%d, ssid:%s, pass:%s",
+        msg.wifiId, msg.wifiSsid.c_str(), msg.wifiPass.c_str());
     m_cmdr.processCmdMsg(msg);
 }
 
+//------------------------------------------------------------------------------
+void SerialCmdHandler::processCmdInfo()
+{
+    CmdDeviceInfoMsg msg;
+    m_cmdr.processCmdMsg(msg);
+}
 
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdReset()
@@ -195,7 +210,6 @@ void SerialCmdHandler::processCmdReset()
     CmdDeviceResetMsg msg;
     m_cmdr.processCmdMsg(msg);
 }
-
 
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdUnrecognized()

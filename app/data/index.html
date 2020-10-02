@@ -224,6 +224,11 @@
           //console.log(pin_id_usbmux);
           if (data.success === "true") {
             if (data.pinstate === "on") {
+              if (pin.includes("ch")) {
+                // When any of USB channels On, the second is always disabled
+                $("#ch_0_state").html("OFF");
+                $("#ch_1_state").html("OFF");
+              }
               $(pin_id_usbmux).html("ON");
             } else {
               $(pin_id_usbmux).html("OFF");

@@ -3,7 +3,7 @@
 
 
 #define DBG_BAUDRATE 115200
-#define DBG_VERBOSITY_LEVEL DBG_VERBOSE
+#define DBG_VERBOSITY_LEVEL DBG_INFO
 
 //------------------------------------------------------------------------------
 void utils::init()
@@ -11,7 +11,8 @@ void utils::init()
     Serial.begin(DBG_BAUDRATE);
     Debug.setDebugOutputStream(&Serial);
     Debug.setDebugLevel(DBG_VERBOSITY_LEVEL);
-    Debug.timestampOn();
+    Debug.timestampOff();
+    inf(">>> USBMUX by luk6xff 2020 <<<\r\n");
 }
 
 //------------------------------------------------------------------------------
