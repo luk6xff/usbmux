@@ -39,7 +39,6 @@ platformio run  &&  platformio run --target buildfs --environment d1_mini  &&  p
 
 
 ## BOM
-obudowa z-23
 
 | PART NAME                          | SHOP LINK                                                                                        | DATASHEET | QUANTITY | PRICE [PLN] |
 |------------------------------------|--------------------------------------------------------------------------------------------------|-----------|----------|-------------|
