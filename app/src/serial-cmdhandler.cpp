@@ -3,7 +3,7 @@
 
 
 //------------------------------------------------------------------------------
-#define SERIAL_CMD_HANDLER_DELIM ";"
+#define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM '\n'
 
 
@@ -48,18 +48,18 @@ void SerialCmdHandler::cmdMenu(void)
     err("<<<<<<<<<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>>>");
     err("");
     err("Options:");
-    err(" h;                Print the help message");
-    err(" ch;[n;id][d]      Set usbmux channel:");
+    err(" h,                Print the help message");
+    err(" ch,[n,id][d]      Set usbmux channel:");
     err("                      n-Channel number(0-1)");
     err("                      id-UsbID for a given channel(0-1)");
     err("                      d-Disable all channels]");
-    err(" pwr;[x;][r;(y)]   Set power relay state:");
+    err(" pwr,[x,][r,(y)]   Set power relay state:");
     err("                      x-Off/On(0-1); r-reset; y-reset timeout value");
-    err(" wf;[x;ssid;pass]  Set device wifi AP - Store access data for a wifi AP:");
+    err(" wf,[x,ssid,pass]  Set device wifi AP - Store access data for a wifi AP:");
     err("                      x-wifi channel(0-2)");
     err("                      ssid-wifi ssid, pass- wifi AP passwd");
-    err(" inf;              Print device information data");
-    err(" r;                Reboot the device");
+    err(" inf,              Print device information data");
+    err(" r,                Reboot the device");
     err("<<<<<<<<<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>>>");
     err("\n");
 }
