@@ -1,6 +1,5 @@
 # usbmux
-USB 2.0 multiplexer based on TS3USB221 module from TI
-
+USB 2.0  two input channel multiplexer based on TS3USB221
 
 ## Instalation
 * Install `vscode` with `platformio` plugin (Versions: vscode[1.49.2], platformio[Core:5.0.1, Home:3.3.0])
