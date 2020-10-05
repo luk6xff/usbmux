@@ -2,7 +2,7 @@
 USB 2.0  two input channel multiplexer based on TS3USB221
 
 ## Details
-A simple USB2.0 2-channel multiplexer controlled using: UART (Serial) CLI and HTTP server available run at `usbmux.local`.
+A simple USB2.0 2-channel multiplexer controlled using: UART(Serial) CLI and HTTP server available running at: `usbmux.local`.
 
 ## Instalation
 * Install `vscode` with `platformio` plugin (Versions: vscode[1.49.2], platformio[Core:5.0.1, Home:3.3.0])
