@@ -35,7 +35,7 @@ platformio run  &&  platformio run --target buildfs --environment d1_mini  &&  p
 ## More random pics
 * Completed device:
 ![usbmux_completed](docs/pics/usbmux_completed.jpg)
-* Serial CLI:
+* UART(Serial) CLI:  
 ![usbmux_web1](docs/pics/usbmux_serial.png)
 * Web server:
 ![usbmux_web1](docs/pics/usbmux_web1.png)
