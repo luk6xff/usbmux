@@ -31,11 +31,13 @@ platformio run  &&  platformio run --target buildfs --environment d1_mini  &&  p
 * Board connector pinout:
 ![usbmux_board_pinout](docs/pics/usbmux_board_pinout.jpg)
 
+## Schematics
+![usbmux_board_schematics](docs/schematics/usbmux_bb.png)
 
 ## More random pics
 * Completed device:
 ![usbmux_completed](docs/pics/usbmux_completed.jpg)
-* UART(Serial) CLI:  
+* UART(Serial) CLI:
 ![usbmux_web1](docs/pics/usbmux_serial.png)
 * Web server:
 ![usbmux_web1](docs/pics/usbmux_web1.png)
