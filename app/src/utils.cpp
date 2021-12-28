@@ -12,7 +12,7 @@ void utils::init()
     Debug.setDebugOutputStream(&Serial);
     Debug.setDebugLevel(DBG_VERBOSITY_LEVEL);
     Debug.timestampOff();
-    inf(">>> USBMUX by luk6xff 2020 <<<\r\n");
+    inf("\r\n\r\n>>>>>> USBMUX by luk6xff 2020 <<<<<<\r\n");
 }
 
 //------------------------------------------------------------------------------

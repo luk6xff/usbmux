@@ -96,7 +96,7 @@ bool AppSettings::storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettin
     else if (wifiSettingsNum == 2)
     {
         newSettings.wifi2 = ws;
-        ret = saveSettings(newSettings); 
+        ret = saveSettings(newSettings);
     }
     else
     {
@@ -110,7 +110,7 @@ bool AppSettings::saveSettings(const Settings &settings)
 {
     // Set the EEPROM data ready for writing
     EEPROM.put(0, settings);
-  
+
     // Write the data to EEPROM
     if (EEPROM.commit())
     {
@@ -128,16 +128,16 @@ void AppSettings::readSettings()
 //------------------------------------------------------------------------------
 void AppSettings::printCurrentSettings()
 {
+    inf("APP_SETTINGS: <<CURRENT APP SETTINGS>>");
+    inf("magic: 0x%08x", getCurrent().magic);
+    inf("version: 0x%08x", getCurrent().version);
+    inf("wifi0.ssid: %s", getCurrent().wifi0.ssid);
+    inf("wifi0.pass: %s", getCurrent().wifi0.pass);
+    inf("wifi1.ssid: %s", getCurrent().wifi1.ssid);
+    inf("wifi1.pass: %s", getCurrent().wifi1.pass);
+    inf("wifi2.ssid: %s", getCurrent().wifi2.ssid);
+    inf("wifi2.pass: %s", getCurrent().wifi2.pass);
     inf("APP_SETTINGS: <<CURRENT APP SETTINGS>>\r\n");
-    inf("magic: 0x%08x\r\n", getCurrent().magic);
-    inf("version: 0x%08x\r\n", getCurrent().version);
-    inf("wifi0.ssid: %s\r\n", getCurrent().wifi0.ssid);
-    inf("wifi0.pass: %s\r\n", getCurrent().wifi0.pass);
-    inf("wifi1.ssid: %s\r\n", getCurrent().wifi1.ssid);
-    inf("wifi1.pass: %s\r\n", getCurrent().wifi1.pass);
-    inf("wifi2.ssid: %s\r\n", getCurrent().wifi2.ssid);
-    inf("wifi2.pass: %s\r\n", getCurrent().wifi2.pass);
-    inf("APP_SETTINGS: <<CURRENT APP SETTINGS>>\r\n\r\n");
 }
 
 //------------------------------------------------------------------------------
