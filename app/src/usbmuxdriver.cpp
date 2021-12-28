@@ -3,11 +3,11 @@
 #include "hw_config.h"
 
 //------------------------------------------------------------------------------
-UsbMuxDriver::UsbMuxDriver(int usbIdPin)
+UsbMuxDriver::UsbMuxDriver(int usbIdPin, int usbMuxOEPin, int usbMuxSPin)
     : m_usbIdPin(usbIdPin)
 {
-    m_usbMuxArduinoDev.oe_pin = USBMUX_OE_PIN;
-    m_usbMuxArduinoDev.s_pin  = USBMUX_S_PIN;
+    m_usbMuxArduinoDev.oe_pin = usbMuxOEPin;
+    m_usbMuxArduinoDev.s_pin  = usbMuxSPin;
     ts3usb221_arduino_init(&m_usbMuxDev, &m_usbMuxArduinoDev);
     // Set USB_ID pin
     pinMode(m_usbIdPin, OUTPUT);

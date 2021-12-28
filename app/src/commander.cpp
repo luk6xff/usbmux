@@ -9,45 +9,83 @@
 
 //------------------------------------------------------------------------------
 CmdHandler::CmdHandler()
-    : m_usbMux(USB_ID_PIN)
-    , m_pwrRelay(RELAY_IN_PIN)
+    : m_usbMux(nullptr)
+    , m_pwrRelays(nullptr)
 {
     dbg(__func__);
+
+#ifdef USBMUX_ON
+    // Create UsbMux
+    m_usbMux = std::make_unique<UsbMuxDriver>(USB_ID_PIN, USBMUX_OE_PIN, USBMUX_S_PIN);
+#endif
+
+#ifdef PWR_RELAYS_ON
+    // Create PowerRelays
+    m_pwrRelays = std::make_unique<std::vector<PowerRelay>>();
+    m_pwrRelays->push_back(PowerRelay(RELAY_IN_PIN_0));
+    m_pwrRelays->push_back(PowerRelay(RELAY_IN_PIN_1));
+#endif
 }
 
 //------------------------------------------------------------------------------
-void CmdHandler::handle(CmdSetChannelMsg& msg)
+void CmdHandler::handle(CmdSetUsbChannelMsg& msg)
 {
-    dbg("CmdSetChannelMsg handler: %s\r\n", __func__);
-    if (msg.disableChannels)
+    dbg("CmdSetUsbChannelMsg handler: %s\r\n", __func__);
+
+    if (!m_usbMux)
     {
-        m_usbMux.disableAll();   
+        err("UsbChannelMux object has not been created, exiting...");
     }
     else
     {
-        m_usbMux.enableChannel(msg.channelNumber, msg.usbIdState);
+        if (msg.disableChannels)
+        {
+            m_usbMux->disableAll();
+        }
+        else
+        {
+            m_usbMux->enableChannel(msg.channelNumber, msg.usbIdState);
+        }
     }
 }
 
 //------------------------------------------------------------------------------
-void CmdHandler::handle(CmdSetRelayMsg& msg)
+void CmdHandler::handle(CmdSetPwrRelayMsg& msg)
 {
-    dbg("CmdSetRelayMsg handler: %s\r\n", __func__);
-    // Is it a reset request ?
-    if (msg.reset)
+    dbg("CmdSetPwrRelayMsg handler: %s\r\n", __func__);
+
+    if (!m_pwrRelays)
     {
-        PowerRelay::RelayState prevState = m_pwrRelay.state();
-        PowerRelay::RelayState state = (prevState == PowerRelay::RelayState::RELAY_OFF) ? \
-                                        PowerRelay::RelayState::RELAY_ON : \
-                                        PowerRelay::RelayState::RELAY_OFF;
-        m_pwrRelay.enable(state);
-        inf("Resetting PwrRelay in %d[ms]...\r\n", msg.resetTimeoutMs);
-        delay(msg.resetTimeoutMs);
-        m_pwrRelay.enable(prevState);
+        err("PowerRelays object has not been created, exiting...");
     }
     else
     {
-        m_pwrRelay.enable(msg.relayState);
+        // Check if ID is valid ?
+        if (msg.relayId >= m_pwrRelays->size())
+        {
+            err("PwrRelayId value must be between (0-%d) !!!\r\n", m_pwrRelays->size()-1);
+        }
+        else
+        {
+            // Extract a PwrRelay reference.
+            auto& pwrRelay = (*m_pwrRelays)[msg.relayId];
+            // Is it a reset request ?
+            if (msg.reset)
+            {
+                const PowerRelay::RelayState prevState = pwrRelay.state();
+                const PowerRelay::RelayState state = (prevState == PowerRelay::RelayState::RELAY_OFF) ? \
+                                                PowerRelay::RelayState::RELAY_ON : \
+                                                PowerRelay::RelayState::RELAY_OFF;
+                pwrRelay.enable(state);
+                inf("Resetting PwrRelay (id:%d) in %d[ms]...\r\n", msg.relayId, msg.resetTimeoutMs);
+                delay(msg.resetTimeoutMs);
+                pwrRelay.enable(prevState);
+            }
+            else
+            {
+                pwrRelay.enable(msg.relayState);
+            }
+        }
     }
 }
 

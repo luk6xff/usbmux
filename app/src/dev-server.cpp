@@ -1,5 +1,6 @@
 
 #include "dev-server.h"
+#include "project_config.h"
 #include "utils.h"
 #include "app-settings.h"
 
@@ -19,6 +20,7 @@ DevServer::DevServer(Commander& cmdr)
 //------------------------------------------------------------------------------
 void DevServer::init()
 {
+#ifdef DEV_SERVER_ON
     WiFi.setAutoConnect(0);
     if (connectToAP())
     {
@@ -65,20 +67,25 @@ void DevServer::init()
     {
         err("Error - Cannot connect to AP!");
     }
+#endif
 }
 
 //------------------------------------------------------------------------------
 void DevServer::process()
 {
+#ifdef DEV_SERVER_ON
     MDNS.update();
     server.handleClient();
+#endif
 }
 
 //------------------------------------------------------------------------------
 bool DevServer::connectToAP()
 {
-    int tries = 0;
+    const int attemptsNum = 5;
+    int attempts = 0;
     bool connected = true;
+
     wifiMulti.addAP(AppSettings::instance().getCurrent().wifi0.ssid,
                     AppSettings::instance().getCurrent().wifi0.pass);
     wifiMulti.addAP(AppSettings::instance().getCurrent().wifi1.ssid,
@@ -91,10 +98,10 @@ bool DevServer::connectToAP()
     {
         // Wait for the Wi-Fi to connect: scan for Wi-Fi networks, and connect to the strongest network
         delay(100);
-        tries++;
-        inf(".");
-        // 5 seconds timeout
-        if (tries > 50)
+        inf("Connection attempt nr: %d of %d failed!", attempts, attemptsNum);
+        attempts++;
+        // attemptsNum timeout.
+        if (attempts > attemptsNum)
         {
             err("Connecting to AP failed!!!");
             connected = false;
@@ -139,12 +146,12 @@ void DevServer::handleUpdateUsbMuxGpio()
     {
         if (pinSearch->second == CH_0 || pinSearch->second == CH_1)
         {
-            CmdSetChannelMsg msg(UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_0);
+            CmdSetUsbChannelMsg msg(UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_0);
             if (pinSearch->second == CH_1)
             {
                 msg.channelNumber = UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_1;
             }
-            
+
             if (usbMuxPinState == "on")
             {
                 if (usbIdPinState == "true")
@@ -172,10 +179,10 @@ void DevServer::handleUpdateUsbMuxGpio()
                 m_cmdr.processCmdMsg(msg);
             }
         }
-        
+
         else if (pinSearch->second == POWER)
         {
-            CmdSetRelayMsg msg;
+            CmdSetPwrRelayMsg msg;
             if (usbMuxPinState == "off")
             {
                 inf("PowerRelay disabling...");
@@ -192,7 +199,7 @@ void DevServer::handleUpdateUsbMuxGpio()
             {
                 success = "false";
             }
-            
+
             // Execute only on success
             if (success == "true")
             {

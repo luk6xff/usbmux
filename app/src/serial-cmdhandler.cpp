@@ -34,7 +34,7 @@ void SerialCmdHandler::setCommands()
 {
     m_commands = SerialCmdMap{
                             {"h",   std::bind(&SerialCmdHandler::cmdMenu, this)},
-                            {"ch",  std::bind(&SerialCmdHandler::processCmdChannel, this)},
+                            {"ch",  std::bind(&SerialCmdHandler::processCmdUsbChannel, this)},
                             {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
                             {"wf",  std::bind(&SerialCmdHandler::processCmdWifi, this)},
                             {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
@@ -53,7 +53,8 @@ void SerialCmdHandler::cmdMenu(void)
     err("                      n-Channel number(0-1)");
     err("                      id-UsbID for a given channel(0-1)");
     err("                      d-Disable all channels]");
-    err(" pwr,[x,][r,(y)]   Set power relay state:");
+    err(" pwr,id,[x,][r,(y)]   Set power relay state:");
+    err("                      id-RelayID number(0,1,2...) ");
     err("                      x-Off/On(0-1); r-reset; y-reset timeout value");
     err(" wf,[x,ssid,pass]  Set device wifi AP - Store access data for a wifi AP:");
     err("                      x-wifi channel(0-2)");
@@ -65,10 +66,10 @@ void SerialCmdHandler::cmdMenu(void)
 }
 
 //------------------------------------------------------------------------------
-void SerialCmdHandler::processCmdChannel()
+void SerialCmdHandler::processCmdUsbChannel()
 {
 
-    CmdSetChannelMsg msg;
+    CmdSetUsbChannelMsg msg;
 
     // Read command
     if (compareCheckStringArg("d"))
@@ -108,17 +109,26 @@ void SerialCmdHandler::processCmdChannel()
 }
 
 //------------------------------------------------------------------------------
-void SerialCmdHandler::processCmdPower() 
+void SerialCmdHandler::processCmdPower()
 {
-    CmdSetRelayMsg msg;
+    CmdSetPwrRelayMsg msg;
 
-    // Read command
+    // Read RelayID
+    const uint8_t relayId = readIntArg();
+    if (!argOk)
+    {
+        err("No PowerRelayID applied!");
+        return;
+    }
+    msg.relayId = relayId;
+
+    // Is it a Reset PwrRelay command ?
     if (compareCheckStringArg("r"))
     {
         // Drop 'r' command
         readStringArg();
         msg.reset = true;
-        
+
         uint32_t timeout = readIntArg();
         if (argOk)
         {
@@ -135,7 +145,7 @@ void SerialCmdHandler::processCmdPower()
         {
             inf("No PowerRelay timeout argument applied");
         }
-        
+
     }
     else
     {
@@ -143,8 +153,8 @@ void SerialCmdHandler::processCmdPower()
         if (argOk)
         {
             msg.relayState = (pwrRelayState == false) ? \
-                                PowerRelay::RelayState::RELAY_OFF : \
-                                PowerRelay::RelayState::RELAY_ON;
+                            PowerRelay::RelayState::RELAY_OFF : \
+                            PowerRelay::RelayState::RELAY_ON;
             inf("PowerRelay state: %d\r\n", pwrRelayState);
         }
         else
@@ -161,7 +171,7 @@ void SerialCmdHandler::processCmdPower()
 void SerialCmdHandler::processCmdWifi()
 {
     CmdSetWifiConfigMsg msg;
- 
+
     const uint8_t wifiId  = readIntArg();
     if (argOk)
     {
@@ -169,11 +179,11 @@ void SerialCmdHandler::processCmdWifi()
         String ssid = readStringArg();
         if (argOk)
         {
-            msg.wifiSsid = ssid; 
+            msg.wifiSsid = ssid;
             String pass = readStringArg();
             if (argOk)
             {
-                msg.wifiPass = pass; 
+                msg.wifiPass = pass;
             }
             else
             {

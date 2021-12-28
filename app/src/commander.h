@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include <vector>
+#include <memory>
 
 #include "usbmuxdriver.h"
 #include "power-relay.h"
@@ -10,8 +11,8 @@
 
 ///< Forward declaration of Actual Command classes
 class CommandMsg;
-class CmdSetChannelMsg;
-class CmdSetRelayMsg;
+class CmdSetUsbChannelMsg;
+class CmdSetPwrRelayMsg;
 class CmdSetWifiConfigMsg;
 class CmdDeviceInfoMsg;
 class CmdDeviceResetMsg;
@@ -24,16 +25,16 @@ class CmdHandler
 {
 public:
     explicit CmdHandler();
-    void handle(CmdSetChannelMsg& msg);
-    void handle(CmdSetRelayMsg& msg);
+    void handle(CmdSetUsbChannelMsg& msg);
+    void handle(CmdSetPwrRelayMsg& msg);
     void handle(CmdSetWifiConfigMsg& msg);
     void handle(CmdDeviceInfoMsg& msg);
     void handle(CmdDeviceResetMsg& msg);
     void handle(CommandMsg& msg);
 
 private:
-    UsbMuxDriver m_usbMux;
-    PowerRelay m_pwrRelay;
+    std::unique_ptr<UsbMuxDriver> m_usbMux;
+    std::unique_ptr<std::vector<PowerRelay>> m_pwrRelays;
 };
 
 
@@ -50,7 +51,7 @@ public:
     }
 
 protected:
-    virtual void dispatchImpl(CmdHandler& handler) = 0; 
+    virtual void dispatchImpl(CmdHandler& handler) = 0;
 };
 
 
@@ -77,11 +78,11 @@ protected:
 ////////////////////////////////////////////////////////////////////////////////
 
 //------------------------------------------------------------------------------
-class CmdSetChannelMsg : public CommandMsgBase<CmdSetChannelMsg>
+class CmdSetUsbChannelMsg : public CommandMsgBase<CmdSetUsbChannelMsg>
 {
 
 public:
-    CmdSetChannelMsg(UsbMuxDriver::UsbChannelNumber chNum=UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_INVALID,
+    CmdSetUsbChannelMsg(UsbMuxDriver::UsbChannelNumber chNum=UsbMuxDriver::UsbChannelNumber::USB_CHANNEL_INVALID,
                      UsbMuxDriver::UsbIdState idState=UsbMuxDriver::UsbIdState::USB_ID_HIGH,
                      bool disable=false)
         : channelNumber(chNum)
@@ -98,25 +99,28 @@ public:
 
 
 //------------------------------------------------------------------------------
-class CmdSetRelayMsg : public CommandMsgBase<CmdSetRelayMsg>
+class CmdSetPwrRelayMsg : public CommandMsgBase<CmdSetPwrRelayMsg>
 {
 
 public:
-    CmdSetRelayMsg()
-        : relayState(PowerRelay::RelayState::RELAY_OFF)
+    CmdSetPwrRelayMsg()
+        : relayId(0)
+        , relayState(PowerRelay::RelayState::RELAY_OFF)
         , reset(false)
         , resetTimeoutMs(k_defaultTimeoutMs)
     {
     }
 
-    CmdSetRelayMsg (PowerRelay::RelayState state, bool reset=false, uint32_t resetTime=k_defaultTimeoutMs)
-        : relayState(state)
+    CmdSetPwrRelayMsg(const uint8_t relayId, PowerRelay::RelayState state, bool reset=false, uint32_t resetTime=k_defaultTimeoutMs)
+        : relayId(relayId)
+        , relayState(state)
         , reset(reset)
         , resetTimeoutMs(resetTime)
     {
     }
 
 public:
+    uint8_t relayId;
     PowerRelay::RelayState relayState;
     bool reset;
     uint32_t resetTimeoutMs;

@@ -24,7 +24,7 @@ private:
     void setCommands();
     void cmdMenu();
 
-    void processCmdChannel();
+    void processCmdUsbChannel();
     void processCmdPower();
     void processCmdWifi();
     void processCmdInfo();

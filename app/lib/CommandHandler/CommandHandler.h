@@ -43,7 +43,7 @@
 #define COMMANDHANDLER_DEFAULT_DELIM ","
 #define COMMANDHANDLER_DEFAULT_TERM ';'
 // The null term for string
-#define STRING_NULL_TERM '\0'
+#define STRING_NULL_TERM 0
 
 // Uncomment the next line to run the library in debug mode (verbose messages)
 //#define COMMANDHANDLER_DEBUG

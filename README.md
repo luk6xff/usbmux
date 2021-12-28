@@ -9,17 +9,18 @@ A simple USB2.0 2-channel multiplexer controlled using: UART(Serial) CLI and HTT
 
 
 ## Building and flashing
+
 ```sh
-# Build an application
-platformio run
-
-# Build filesystem
+# If you use DevWebServer in your app `#define DEV_SERVER_ON in project_config.h` run:
+## Build filesystem
 platformio run --target buildfs --environment d1_mini
-
-# Upload filesystem image
+## Upload filesystem image
 platformio run --target uploadfs --environment d1_mini
 
-# Upload the application binary
+# And finally build and upload the application image:
+## Build the application
+platformio run
+## Upload the application binary
 platformio run --target upload
 
 # All in one-liner

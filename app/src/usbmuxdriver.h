@@ -28,8 +28,10 @@ public:
      * @brief Ctor
      *
      * @param usbIdPin - USB_ID pin
+     * @param usbMuxOEPin - USB_MUX_OE pin
+     * @param usbMuxSPin - USB_MUX_S pin
      */
-    explicit UsbMuxDriver(int usbIdPin);
+    explicit UsbMuxDriver(int usbIdPin, int usbMuxOEPin, int usbMuxSPin);
 
     /**
      * @brief Enables a given channel, setting proper state on usb_id pin
