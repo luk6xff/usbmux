@@ -12,7 +12,13 @@ void utils::init()
     Debug.setDebugOutputStream(&Serial);
     Debug.setDebugLevel(DBG_VERBOSITY_LEVEL);
     Debug.timestampOff();
-    inf("\r\n\r\n>>>>>> USBMUX by luk6xff 2020 <<<<<<\r\n");
+    inf("\r\n\r\n>>>>>>------------------------<<<<<<");
+    inf(">>>>>>------------------------<<<<<<");
+    inf(">>>>>> USBMUX by luk6xff 2020 <<<<<<");
+    inf(">>>>>>------------------------<<<<<<");
+    inf(">>>>>>------------------------<<<<<<");
+    inf(">>>>>> Press h+ENTER for help <<<<<<");
+    inf(">>>>>>------------------------<<<<<<\r\n");
 }
 
 //------------------------------------------------------------------------------
@@ -21,3 +27,5 @@ void utils::update()
     //Update all the timers at once
     TimerManager::instance().update();
 }
+
+//------------------------------------------------------------------------------

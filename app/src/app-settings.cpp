@@ -47,7 +47,7 @@ void AppSettings::init()
     if (getCurrent().magic == getDefaults().magic && \
         getCurrent().version == getDefaults().version)
     {
-        inf("APP_SETTINGS: Read eeprom settings look ok\r\n");
+        dbg("APP_SETTINGS: Read eeprom settings look ok\r\n");
     }
     else
     {
@@ -128,16 +128,16 @@ void AppSettings::readSettings()
 //------------------------------------------------------------------------------
 void AppSettings::printCurrentSettings()
 {
-    inf("APP_SETTINGS: <<CURRENT APP SETTINGS>>");
-    inf("magic: 0x%08x", getCurrent().magic);
-    inf("version: 0x%08x", getCurrent().version);
-    inf("wifi0.ssid: %s", getCurrent().wifi0.ssid);
-    inf("wifi0.pass: %s", getCurrent().wifi0.pass);
-    inf("wifi1.ssid: %s", getCurrent().wifi1.ssid);
-    inf("wifi1.pass: %s", getCurrent().wifi1.pass);
-    inf("wifi2.ssid: %s", getCurrent().wifi2.ssid);
-    inf("wifi2.pass: %s", getCurrent().wifi2.pass);
-    inf("APP_SETTINGS: <<CURRENT APP SETTINGS>>\r\n");
+    dbg("APP_SETTINGS: <<CURRENT APP SETTINGS>>");
+    dbg("magic: 0x%08x", getCurrent().magic);
+    dbg("version: 0x%08x", getCurrent().version);
+    dbg("wifi0.ssid: %s", getCurrent().wifi0.ssid);
+    dbg("wifi0.pass: %s", getCurrent().wifi0.pass);
+    dbg("wifi1.ssid: %s", getCurrent().wifi1.ssid);
+    dbg("wifi1.pass: %s", getCurrent().wifi1.pass);
+    dbg("wifi2.ssid: %s", getCurrent().wifi2.ssid);
+    dbg("wifi2.pass: %s", getCurrent().wifi2.pass);
+    dbg("APP_SETTINGS: <<CURRENT APP SETTINGS>>\r\n");
 }
 
 //------------------------------------------------------------------------------

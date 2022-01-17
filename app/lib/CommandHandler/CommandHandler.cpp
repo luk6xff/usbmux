@@ -26,10 +26,10 @@
 #include "CommandHandler.h"
 /**
  * Constructor allowing to change default delim and term
- * Example: SerialCommand sCmd(" ", ';');
+ * Example: SerialCommand sCmd(" ", '\n', '\r');
  * Default are COMMANDHANDLER_DEFAULT_DELIM and COMMANDHANDLER_DEFAULT_TERM
  */
-CommandHandler::CommandHandler(const char *newdelim, char newterm)
+CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm2)
   : commandList(NULL),
     commandCount(0),
     relayList(NULL),
@@ -37,7 +37,8 @@ CommandHandler::CommandHandler(const char *newdelim, char newterm)
     defaultHandler(NULL),
     pt2defaultHandlerObject(NULL),
     wrapper_defaultHandler(NULL),
-    term(newterm),           // asssign new terminator for commands
+    term1(newterm1),  // asssign new terminator1 for commands
+    term2(newterm2),  // asssign new terminator2 for commands
     last(NULL),
     delim(newdelim) // assign new delimitor
 {
@@ -154,7 +155,7 @@ void CommandHandler::processString(const char *inString) {
  * buffer for a prefix command, and calls handlers setup by addCommand() member
  */
 void CommandHandler::processChar(char inChar) {
-  if (inChar == term) {     // Check for the terminator (default '\r') meaning end of command
+  if (inChar == term1 || inChar == term2) {     // Check for the terminators (default: '\n' and '\r') meaning end of command
     #ifdef COMMANDHANDLER_DEBUG
       Serial.print("Received: ");
       Serial.println(buffer);
@@ -261,7 +262,7 @@ char *CommandHandler::remaining() {
   remains[0] = STRING_NULL_TERM;
 
   char str_term[2];
-  str_term[0] = term;
+  str_term[0] = term1;
   str_term[1] = STRING_NULL_TERM;
 
    // Search for the remaining up to next term
@@ -429,7 +430,7 @@ void CommandHandler::addCmdDelim() {
 //
 void CommandHandler::addCmdTerm() {
 
-  commandString = commandString + String(term);
+  commandString = commandString + String(term1);
 
   #ifdef COMMANDHANDLER_DEBUG
     Serial.print("Out command is now ");

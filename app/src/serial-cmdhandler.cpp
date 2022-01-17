@@ -4,12 +4,13 @@
 
 //------------------------------------------------------------------------------
 #define SERIAL_CMD_HANDLER_DELIM ","
-#define SERIAL_CMD_HANDLER_TERM '\n'
+#define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
+#define SERIAL_CMD_HANDLER_TERM2 '\r' // CR
 
 
 //------------------------------------------------------------------------------
 SerialCmdHandler::SerialCmdHandler(Commander& cmdr)
-    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM)
+    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2)
     , m_cmdr(cmdr)
 {
     // Setup callbacks for SerialCommand commands
@@ -48,19 +49,19 @@ void SerialCmdHandler::cmdMenu(void)
     err("<<<<<<<<<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>>>");
     err("");
     err("Options:");
-    err(" h,                Print the help message");
-    err(" ch,[n,id][d]      Set usbmux channel:");
+    err(" h                Print the help message");
+    err(" ch,[n,id][d]     Set usbmux channel:");
     err("                      n-Channel number(0-1)");
     err("                      id-UsbID for a given channel(0-1)");
     err("                      d-Disable all channels]");
     err(" pwr,id,[x,][r,(y)]   Set power relay state:");
     err("                      id-RelayID number(0,1,2...) ");
     err("                      x-Off/On(0-1); r-reset; y-reset timeout value");
-    err(" wf,[x,ssid,pass]  Set device wifi AP - Store access data for a wifi AP:");
+    err(" wf,[x,ssid,pass] Set device wifi AP - Store access data for a wifi AP:");
     err("                      x-wifi channel(0-2)");
     err("                      ssid-wifi ssid, pass- wifi AP passwd");
-    err(" inf,              Print device information data");
-    err(" r,                Reboot the device");
+    err(" inf              Print device information data");
+    err(" r                Reboot the device");
     err("<<<<<<<<<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>>>");
     err("\n");
 }
@@ -70,6 +71,9 @@ void SerialCmdHandler::processCmdUsbChannel()
 {
 
     CmdSetUsbChannelMsg msg;
+
+    err("USBMUX Channel command not supported!");
+    return;
 
     // Read command
     if (compareCheckStringArg("d"))
@@ -135,15 +139,15 @@ void SerialCmdHandler::processCmdPower()
             const uint32_t maxTimeout = 30000;
             if (timeout > maxTimeout)
             {
-                inf("PowerRelay reset timeout changed to max value: %d[ms]\r\n", timeout);
+                inf("PowerRelay[id:%d] reset timeout changed to max value: %d[ms]\r\n", relayId, timeout);
                 timeout = maxTimeout;
             }
             msg.resetTimeoutMs = timeout;
-            inf("PowerRelay reset timeout: %d[ms]\r\n", timeout);
+            inf("PowerRelay[id:%d] reset timeout: %d[ms]\r\n", relayId, timeout);
         }
         else
         {
-            inf("No PowerRelay timeout argument applied");
+            inf("No PowerRelay[id:%d] timeout argument applied", relayId);
         }
 
     }
@@ -155,7 +159,7 @@ void SerialCmdHandler::processCmdPower()
             msg.relayState = (pwrRelayState == false) ? \
                             PowerRelay::RelayState::RELAY_OFF : \
                             PowerRelay::RelayState::RELAY_ON;
-            inf("PowerRelay state: %d\r\n", pwrRelayState);
+            inf("PowerRelay[id:%d] state SET to: %s\r\n", relayId, pwrRelayState == false ? "RELAY_OFF" : "RELAY_ON");
         }
         else
         {

@@ -41,7 +41,8 @@
 #define COMMANDHANDLER_MAXCOMMANDLENGTH 8
 // Default delimitor and terminator
 #define COMMANDHANDLER_DEFAULT_DELIM ","
-#define COMMANDHANDLER_DEFAULT_TERM ';'
+#define COMMANDHANDLER_DEFAULT_TERM1 '\n'
+#define COMMANDHANDLER_DEFAULT_TERM2 '\r'
 // The null term for string
 #define STRING_NULL_TERM 0
 
@@ -56,7 +57,7 @@ typedef std::function<void(const char *, void *)> TDefaultWrapperHandlerFunction
 
 class CommandHandler {
   public:
-    CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm = COMMANDHANDLER_DEFAULT_TERM);   // Constructor
+    CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm1 = COMMANDHANDLER_DEFAULT_TERM1, const char newterm2 = COMMANDHANDLER_DEFAULT_TERM2);   // Constructor
     void addCommand(const char *command, TCmdHandlerFunction function);  // Add a command to the processing dictionary.
     void addRelay(const char *command, TRelayHandlerFunction function, void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
     void setDefaultHandler(TDefaultHandlerFunction function);   // A handler to call when no valid command received.
@@ -132,8 +133,8 @@ class CommandHandler {
     TDefaultWrapperHandlerFunction wrapper_defaultHandler;
 
     const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
-    char term;     // Character that signals end of command (default '\n')
-
+    char term1;        // Character that signals end of command (default '\n')
+    char term2;        // Character that signals end of command (default '\r')
     char buffer[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters while waiting for terminator character
     byte bufPos;                        // Current position in the buffer
     char *last;                         // State variable used by strtok_r during processing
