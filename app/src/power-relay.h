@@ -11,8 +11,8 @@ public:
 
     typedef enum
     {
-        RELAY_ON  = LOW,
-        RELAY_OFF = HIGH,
+        RELAY_ON  = HIGH,
+        RELAY_OFF = LOW,
     } RelayState;
 
 public:
