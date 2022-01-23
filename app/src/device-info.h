@@ -69,6 +69,7 @@ private:
     InfoValue<String> buildAuthor;
     InfoValue<String> buildDate;
     InfoValue<String> buildTime;
+    InfoValue<uint32_t> buildVersion;
     InfoValue<uint16_t> vcc;
     InfoValue<uint32_t> chipId;
     InfoValue<String> fullVersion;

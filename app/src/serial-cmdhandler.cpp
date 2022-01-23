@@ -46,23 +46,16 @@ void SerialCmdHandler::setCommands()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::cmdMenu(void)
 {
-    err("<<<<<<<<<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>>>");
+    err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
     err("");
     err("Options:");
-    err(" h                Print the help message");
-    err(" ch,[n,id][d]     Set usbmux channel:");
-    err("                      n-Channel number(0-1)");
-    err("                      id-UsbID for a given channel(0-1)");
-    err("                      d-Disable all channels]");
+    err(" h                    Print the help message");
     err(" pwr,id,[x,][r,(y)]   Set power relay state:");
-    err("                      id-RelayID number(0,1,2...) ");
-    err("                      x-Off/On(0-1); r-reset; y-reset timeout value");
-    err(" wf,[x,ssid,pass] Set device wifi AP - Store access data for a wifi AP:");
-    err("                      x-wifi channel(0-2)");
-    err("                      ssid-wifi ssid, pass- wifi AP passwd");
-    err(" inf              Print device information data");
-    err(" r                Reboot the device");
-    err("<<<<<<<<<<<<<<<<<<<<<<<<<<<< USBMUX by luk6xff (2020) >>>>>>>>>>>>>>>>>>>>>>>>>");
+    err("                          id-RelayID number(0,1,2...) ");
+    err("                          x-Off/On(0-1); r-reset; y-reset timeout value");
+    err(" inf                  Print device information data");
+    err(" r                    Reboot the device");
+    err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
     err("\n");
 }
 

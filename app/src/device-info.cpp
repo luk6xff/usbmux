@@ -1,10 +1,12 @@
 #include "device-info.h"
+#include "app-settings.h"
 
 DeviceInfo::DeviceInfo()
     : buildAuthor("Build author", "luk6xff")
     , buildDate("Build date", F(__DATE__))
     , buildTime("Build time", F(__TIME__))
-    , vcc("VCC", ESP.getVcc(), "V")
+    , buildVersion("Build version", AppSettings::instance().getCurrent().version)
+    , vcc("VCC", ESP.getVcc()*3300/0xFFFF, "mV")
     , chipId("Chip ID", ESP.getChipId())
     , fullVersion("Libs version", ESP.getFullVersion())
     , bootVersion("Boot version", ESP.getBootVersion())
@@ -21,10 +23,11 @@ DeviceInfo::DeviceInfo()
 //------------------------------------------------------------------------------
 String DeviceInfo::latest()
 {
-    String res = "<<<DeviceInfo>>>\r\n";
+    String res = ">>>>>>>>>>>>>>>>>>>> DeviceInfo <<<<<<<<<<<<<<<<<<<<\r\n";
     res += buildAuthor.toValueString() + "\r\n"
             + buildDate.toValueString() + "\r\n"
             + buildTime.toValueString() + "\r\n"
+            + buildVersion.toValueString() + "\r\n"
             + vcc.toValueString() + "\r\n"
             + chipId.toValueString() + "\r\n"
             + fullVersion.toValueString() + "\r\n"
@@ -46,6 +49,7 @@ String DeviceInfo::createDevInfoTable()
     json += buildAuthor.toServerJson() + ","
             + buildDate.toServerJson() + ","
             + buildTime.toServerJson() + ","
+            + buildVersion.toServerJson() + ","
             + vcc.toServerJson() + ","
             + chipId.toServerJson() + ","
             + fullVersion.toServerJson() + ","

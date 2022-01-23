@@ -1,8 +1,6 @@
-# usbmux
-USB 2.0  two input channel multiplexer based on TS3USB221
-
-## Details
-A simple USB2.0 2-channel multiplexer controlled using: UART(Serial) CLI and HTTP server available running at: `usbmux.local`.
+# usbmux (power-relays)
+Simple Power Relay controller with UART(Serial) interface.
+For USB Multiplexer functionality visit [master branch](https://github.com/luk6xff/usbmux/tree/master).
 
 ## Instalation
 * Install `vscode` with `platformio` plugin (Versions: vscode[1.49.2], platformio[Core:5.0.1, Home:3.3.0])
@@ -29,21 +27,15 @@ platformio run  &&  platformio run --target buildfs --environment d1_mini  &&  p
 
 ## Pinout
 * HW pinout defined at: `usbmux/app/src/hw_config.h`
-* Board connector pinout:
-![usbmux_board_pinout](docs/pics/usbmux_board_pinout.jpg)
 
-## Schematics
-![usbmux_board_schematics](docs/schematics/usbmux_bb.png)
-
-## More random pics
-* Completed device:
-![usbmux_completed](docs/pics/usbmux_completed.jpg)
+## Pics
+* The device:
+![usbmux_pwr_relays1](docs/pics/IMG1.jpg)
+![usbmux_pwr_relays2](docs/pics/IMG2.jpg)
+![usbmux_pwr_relays3](docs/pics/IMG3.jpg)
+![usbmux_pwr_relays4](docs/pics/IMG4.jpg)
 * UART(Serial) CLI:
-![usbmux_web1](docs/pics/usbmux_serial.png)
-* Web server:
-![usbmux_web1](docs/pics/usbmux_web1.png)
-![usbmux_web2](docs/pics/usbmux_web2.png)
-
+![usbmux_pwr_relays5](docs/pics/IMG5.png)
 
 ## BOM
 
