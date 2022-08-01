@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <memory>
+#include <string>
 
 #include "usbmuxdriver.h"
 #include "power-relay.h"
@@ -16,7 +17,7 @@ class CmdSetPwrRelayMsg;
 class CmdSetWifiConfigMsg;
 class CmdDeviceInfoMsg;
 class CmdDeviceResetMsg;
-
+class CmdDeviceSetNameMsg;
 
 /**
  * @brief Command Handler class.
@@ -29,6 +30,7 @@ public:
     void handle(CmdSetPwrRelayMsg& msg);
     void handle(CmdSetWifiConfigMsg& msg);
     void handle(CmdDeviceInfoMsg& msg);
+    void handle(CmdDeviceSetNameMsg& msg);
     void handle(CmdDeviceResetMsg& msg);
     void handle(CommandMsg& msg);
 
@@ -157,6 +159,18 @@ class CmdDeviceInfoMsg : public CommandMsgBase<CmdDeviceInfoMsg>
 {
 public:
     CmdDeviceInfoMsg() = default;
+};
+
+
+//------------------------------------------------------------------------------
+class CmdDeviceSetNameMsg : public CommandMsgBase<CmdDeviceSetNameMsg>
+{
+public:
+    CmdDeviceSetNameMsg(std::string name_)
+    : m_name(name_)
+    {
+    }
+    std::string m_name;
 };
 
 

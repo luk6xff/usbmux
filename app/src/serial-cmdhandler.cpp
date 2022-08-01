@@ -1,7 +1,6 @@
 #include "serial-cmdhandler.h"
 #include "utils.h"
 
-
 //------------------------------------------------------------------------------
 #define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
@@ -40,6 +39,7 @@ void SerialCmdHandler::setCommands()
                             {"wf",  std::bind(&SerialCmdHandler::processCmdWifi, this)},
                             {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
                             {"r",   std::bind(&SerialCmdHandler::processCmdReset, this)},
+                            {"n",   std::bind(&SerialCmdHandler::processCmdSetName, this)}
                             };
 }
 
@@ -54,6 +54,7 @@ void SerialCmdHandler::cmdMenu(void)
     err("                          id-RelayID number(0,1,2...) ");
     err("                          x-Off/On(0-1); r-reset; y-reset timeout value");
     err(" inf                  Print device information data");
+    err(" n,new_name           Change name of the USBMUX");
     err(" r                    Reboot the device");
     err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
     err("\n");
@@ -208,6 +209,17 @@ void SerialCmdHandler::processCmdWifi()
 void SerialCmdHandler::processCmdInfo()
 {
     CmdDeviceInfoMsg msg;
+    m_cmdr.processCmdMsg(msg);
+}
+
+//------------------------------------------------------------------------------
+void SerialCmdHandler::processCmdSetName()
+{
+    // read name
+    String name = readStringArg();
+    std::string std_name(name.c_str());
+    inf("Matched Name: %s", std_name.c_str());
+    CmdDeviceSetNameMsg msg(std_name);
     m_cmdr.processCmdMsg(msg);
 }
 

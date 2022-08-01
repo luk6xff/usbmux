@@ -2,7 +2,8 @@
 #include "app-settings.h"
 
 DeviceInfo::DeviceInfo()
-    : buildAuthor("Build author", "luk6xff")
+    : name("Name", AppSettings::instance().getCurrent().name)
+    , buildAuthor("Build author", "luk6xff")
     , buildDate("Build date", F(__DATE__))
     , buildTime("Build time", F(__TIME__))
     , buildVersion("Build version", AppSettings::instance().getCurrent().version)
@@ -24,7 +25,8 @@ DeviceInfo::DeviceInfo()
 String DeviceInfo::latest()
 {
     String res = ">>>>>>>>>>>>>>>>>>>> DeviceInfo <<<<<<<<<<<<<<<<<<<<\r\n";
-    res += buildAuthor.toValueString() + "\r\n"
+    res += name.toValueString() + "\r\n"
+            + buildAuthor.toValueString() + "\r\n"
             + buildDate.toValueString() + "\r\n"
             + buildTime.toValueString() + "\r\n"
             + buildVersion.toValueString() + "\r\n"
@@ -46,7 +48,8 @@ String DeviceInfo::latest()
 String DeviceInfo::createDevInfoTable()
 {
     String json = "[";
-    json += buildAuthor.toServerJson() + ","
+    json += name.toServerJson() + ","
+            + buildAuthor.toServerJson() + ","
             + buildDate.toServerJson() + ","
             + buildTime.toServerJson() + ","
             + buildVersion.toServerJson() + ","

@@ -66,6 +66,7 @@ public:
     String createDynamicDevInfo();
 
 private:
+    InfoValue<String> name;
     InfoValue<String> buildAuthor;
     InfoValue<String> buildDate;
     InfoValue<String> buildTime;

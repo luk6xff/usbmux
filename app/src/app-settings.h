@@ -1,9 +1,11 @@
 #pragma once
 
 #include <cstdint>
+#include <string>
 
 #define WIFI_SETTINGS_LEN 20
 #define WIFI_SETTINGS_CH_NUM 3
+#define NAME_LEN 20
 
 class AppSettings
 {
@@ -20,6 +22,7 @@ public:
     {
         uint32_t magic;
         uint32_t version;
+        char name[NAME_LEN];
         WifiSettings wifi0;
         WifiSettings wifi1;
         WifiSettings wifi2;
@@ -34,6 +37,7 @@ public:
 
     // Settings options
     bool storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettings& ws);
+    bool storeName(std::string name);
 
 private:
     AppSettings();
