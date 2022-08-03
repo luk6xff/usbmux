@@ -28,6 +28,7 @@ private:
     void processCmdPower();
     void processCmdWifi();
     void processCmdInfo();
+    void processCmdSetName();
     void processCmdReset();
     void processCmdUnrecognized();
 

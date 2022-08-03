@@ -112,6 +112,12 @@ void CmdHandler::handle(CmdDeviceInfoMsg& msg)
 }
 
 //------------------------------------------------------------------------------
+void CmdHandler::handle(CmdDeviceSetNameMsg& msg)
+{
+    AppSettings::instance().storeName(msg.m_name);
+}
+
+//------------------------------------------------------------------------------
 void CmdHandler::handle(CmdDeviceResetMsg& msg)
 {
     inf("Device restarting...");

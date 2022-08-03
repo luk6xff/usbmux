@@ -1,5 +1,6 @@
 #include "app-settings.h"
 #include <ESP_EEPROM.h>
+#include "Arduino.h"
 #include "utils.h"
 
 //------------------------------------------------------------------------------
@@ -9,7 +10,7 @@ AppSettings::AppSettings()
     defaultSettings =
     {
         .magic = 0x4C554B36,  // LUK6
-        .version = 0x00000006,
+        .version = 0x00000007,
     };
 
     WifiSettings wifiDefault;
@@ -19,6 +20,9 @@ AppSettings::AppSettings()
     memcpy(wifiDefault.ssid, "admin", strlen("admin"));
     memcpy(wifiDefault.pass, "admin", strlen("admin"));
     // Assign defaults
+    
+    memset(&defaultSettings.name, 0, sizeof(defaultSettings.name));
+    memcpy(&defaultSettings.name, "MUX_DEFAULT", strlen("MUX_DEFAULT"));
     defaultSettings.wifi0 = wifiDefault;
     defaultSettings.wifi1 = wifiDefault;
     defaultSettings.wifi2 = wifiDefault;
@@ -106,6 +110,20 @@ bool AppSettings::storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettin
 }
 
 //------------------------------------------------------------------------------
+bool AppSettings::storeName(const String &name_)
+{
+    bool ret = true;
+    const char* name = name_.c_str();
+    Settings newSettings = getCurrent();
+    
+    memset(&newSettings.name, 0, sizeof(newSettings.name));
+    memcpy(&newSettings.name, name, strlen(name));
+    ret = saveSettings(newSettings);
+    wrn("Settings saved, name set to: %s", name);
+    return ret;
+}
+
+//------------------------------------------------------------------------------
 bool AppSettings::saveSettings(const Settings &settings)
 {
     // Set the EEPROM data ready for writing
@@ -114,6 +132,7 @@ bool AppSettings::saveSettings(const Settings &settings)
     // Write the data to EEPROM
     if (EEPROM.commit())
     {
+        currentSettings = settings;
         return true;
     }
     return false;
@@ -131,6 +150,7 @@ void AppSettings::printCurrentSettings()
     dbg("APP_SETTINGS: <<CURRENT APP SETTINGS>>");
     dbg("magic: 0x%08x", getCurrent().magic);
     dbg("version: 0x%08x", getCurrent().version);
+    dbg("name: %s", getCurrent().name);
     dbg("wifi0.ssid: %s", getCurrent().wifi0.ssid);
     dbg("wifi0.pass: %s", getCurrent().wifi0.pass);
     dbg("wifi1.ssid: %s", getCurrent().wifi1.ssid);
