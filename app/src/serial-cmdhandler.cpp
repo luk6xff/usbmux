@@ -1,4 +1,5 @@
 #include "serial-cmdhandler.h"
+#include "app-settings.h"
 #include "utils.h"
 
 //------------------------------------------------------------------------------
@@ -54,7 +55,9 @@ void SerialCmdHandler::cmdMenu(void)
     err("                          id-RelayID number(0,1,2...) ");
     err("                          x-Off/On(0-1); r-reset; y-reset timeout value");
     err(" inf                  Print device information data");
-    err(" n,new_name           Change name of the USBMUX");
+    err(" n,name               Change name of the USBMUX:");
+    err("                          name-new name string value presented in inf command");
+    err("                              -maximum 20 characters");
     err(" r                    Reboot the device");
     err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
     err("\n");
@@ -217,9 +220,12 @@ void SerialCmdHandler::processCmdSetName()
 {
     // read name
     String name = readStringArg();
-    std::string std_name(name.c_str());
-    inf("Matched Name: %s", std_name.c_str());
-    CmdDeviceSetNameMsg msg(std_name);
+    if (name.length() > 19)
+    {
+        name = name.substring(0,NAME_LEN);
+    }
+    inf("Matched Name: %s", name.c_str());
+    CmdDeviceSetNameMsg msg(name);
     m_cmdr.processCmdMsg(msg);
 }
 

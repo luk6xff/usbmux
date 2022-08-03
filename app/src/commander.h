@@ -166,11 +166,11 @@ public:
 class CmdDeviceSetNameMsg : public CommandMsgBase<CmdDeviceSetNameMsg>
 {
 public:
-    CmdDeviceSetNameMsg(std::string name_)
-    : m_name(name_)
+    CmdDeviceSetNameMsg(String name)
+    : m_name(name)
     {
     }
-    std::string m_name;
+    String m_name;
 };
 
 

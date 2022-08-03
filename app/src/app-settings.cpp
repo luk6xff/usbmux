@@ -1,5 +1,6 @@
 #include "app-settings.h"
 #include <ESP_EEPROM.h>
+#include "Arduino.h"
 #include "utils.h"
 
 //------------------------------------------------------------------------------
@@ -8,7 +9,7 @@ AppSettings::AppSettings()
     // Modify according to your application
     defaultSettings =
     {
-        .magic = 0x3F38B289,  // JAC7
+        .magic = 0x4C554B36,  // LUK6
         .version = 0x00000007,
     };
 
@@ -109,7 +110,7 @@ bool AppSettings::storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettin
 }
 
 //------------------------------------------------------------------------------
-bool AppSettings::storeName(std::string name_)
+bool AppSettings::storeName(const String &name_)
 {
     bool ret = true;
     const char* name = name_.c_str();
