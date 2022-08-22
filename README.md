@@ -41,12 +41,9 @@ platformio run  &&  platformio run --target buildfs --environment d1_mini  &&  p
 
 | PART NAME                          | SHOP LINK                                                                                        | DATASHEET | QUANTITY | PRICE [PLN] |
 |------------------------------------|--------------------------------------------------------------------------------------------------|-----------|----------|-------------|
-| ESP8266 WEMOS D1-MINI | [AliExpress](https://aliexpress.com/item/32845061455.html)|[ESP8266-D1MINI](./https://docs.wemos.cc/en/latest/d1/d1_mini.html) | 1 | 7.99          |
-| TS3USB221 - USB 2.0 Mux | [AliExpress](https://aliexpress.com/item/32890652381.html) |[TS3USB221](./app/lib/TS3USB221/docs/ts3usb221.pdf) | 1 | 6.00                       |
-| Relay module | [AliExpress](https://aliexpress.com/item/4000295545270.html) | - | 1 | 2.09                                                                                 |
-| CASE type: Z23  | [Allegro](https://allegro.pl/oferta/z-23-obudowa-z-tworzywa-84x59x30mm-polistyren-z23-8519706140) | [Z23](./docs/datasheet/Z23.pdf) | 1 | 3.39           |
-| Micro USB 2.0 male connector | [Allegro](https://allegro.pl/oferta/wtyk-micro-mikro-usb-typu-b-montaz-na-kabel-0217a-8100421172) | - | 1 | 1.20                            |
-| Mini USB 2.0 male connector | [Allegro](https://allegro.pl/oferta/wtyk-wtyczka-mini-usb-5p-5pin-typ-b-na-kabel-1947a-8504618684) | - | 1 | 1.40                            |
-| Micro USB 2.0 female to DIP Adapter | [Allegro](https://allegro.pl/oferta/plytka-adapter-micro-usb-2-0-zenska-switch-dip-5p-8851640680) | - | 1 | 2.29                     |
-| Mini USB 2.0 female to DIP Adapter | [Allegro](https://allegro.pl/oferta/plytka-adapter-mini-usb-dip-5p-wtyczka-zenska-8130118409) | - | 1 | 2.29                          |
-|  |  |  |  | = 26.65                                                                                                                                                        |
+| ESP8266 WEMOS D1-MINI | [Allegro](https://allegro.pl/oferta/wemos-d1-mini-nodemcu-esp8266-12f-esp-12-arduino-9838983193?snapshot=MjAyMi0wNy0wNlQxNDoxMzoyNi4wMTFaO2J1eWVyOzU2ZWExMTFiZjVkN2JjNGE2MDYxOGJiMzMyMjI2MGM5YmQxYWUxYzIzOTdiMTgyNGZkZDgwNDk2NTIwOGQ0MDg%3D)|[ESP8266-D1MINI](./https://docs.wemos.cc/en/latest/d1/d1_mini.html) | 1 | 18.39          |
+| 2-channel relay module | [Allegro](https://allegro.pl/oferta/przekaznik-5v-arduino-2-kanalowy-ark-high-low-9986689907?snapshot=MjAyMi0wNy0wNlQxNDoxMzoyNi4wMTFaO2J1eWVyOzk4MThmYzRhNDMwMjJhZjM0NmEwZDAxM2EyMzczMzcyZTlhNzIxNmI4YzdjNGI0NTExN2JmYjJkMTBkNmVlZWE%3D) | - | 1 | 14.00                                                                                 |
+| Case | [Allegro](https://allegro.pl/oferta/puszka-instalacyjna-pk-4-8797267687?snapshot=MjAyMi0wNy0wNlQxNDoxMzoyNi4wMTFaO2J1eWVyO2M5YWNhNGIyNDI5NjQ5YjNhYmI5ZGFiNWM1Y2FlZGMxY2ZhMTg2MDdiMzVlZTIyMmFmZTI1NzYxYmFjZTU1ZDE%3D) | - | 1 | 8.40           |
+| Electric socket | [Allegro](https://allegro.pl/oferta/gniazdo-gn-170k-10720952444?snapshot=MjAyMi0wNy0wNlQxNDoxMzoyNi4wMTFaO2J1eWVyOzNjMDc5YzU0YzBmYWZjOWFhY2JlYjQ2NzUxNTkzMTMzOWFmYjk0NWRjMGZhYzRmN2NhYmVlZWE0NDJmNzcwZmM%3D) | - | 1 | 3.20                           |
+| Connecting cable with a plug | [Allegro](https://allegro.pl/oferta/przewod-przylaczeniowy-wj-22-1-5-m-7489403465?snapshot=MjAyMi0wNy0wNlQxNDoxMzoyNi4wMTFaO2J1eWVyO2QwYTlmZjFjZWY2NWMwYmViZTJmOWRmMzQzNTVkZDVjYzgwODdhM2QwYjk5NTc4NGFjNDgzYTRhODUwN2IxN2Q%3D) | - | 1 | 9.14                          |
+|  |  |  |  | =~ 54.00                                                                                                                                                       |
