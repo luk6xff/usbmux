@@ -155,6 +155,7 @@ void CommandHandler::processString(const char *inString) {
  * buffer for a prefix command, and calls handlers setup by addCommand() member
  */
 void CommandHandler::processChar(char inChar) {
+  Serial.print(inChar);   // Echo back to serial stream, more user friendly.
   if (inChar == term1 || inChar == term2) {     // Check for the terminators (default: '\n' and '\r') meaning end of command
     #ifdef COMMANDHANDLER_DEBUG
       Serial.print("Received: ");

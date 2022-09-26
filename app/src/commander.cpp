@@ -21,9 +21,18 @@ CmdHandler::CmdHandler()
 
 #ifdef PWR_RELAYS_ON
     // Create PowerRelays
-    m_pwrRelays = std::make_unique<std::vector<PowerRelay>>();
-    m_pwrRelays->push_back(PowerRelay(RELAY_IN_PIN_0));
-    m_pwrRelays->push_back(PowerRelay(RELAY_IN_PIN_1));
+    m_pwrRelays = std::make_unique<std::vector<PowerRelay>>(
+        std::vector{
+            PowerRelay(RELAY_IN_PIN_0),
+            PowerRelay(RELAY_IN_PIN_1),
+            PowerRelay(RELAY_IN_PIN_2),
+            PowerRelay(RELAY_IN_PIN_3),
+            PowerRelay(RELAY_IN_PIN_4),
+            PowerRelay(RELAY_IN_PIN_5),
+            PowerRelay(RELAY_IN_PIN_6),
+            PowerRelay(RELAY_IN_PIN_7)
+        }
+    );
 #endif
 }
 
@@ -80,6 +89,7 @@ void CmdHandler::handle(CmdSetPwrRelayMsg& msg)
                 inf("Resetting PwrRelay (id:%d) in %d[ms]...\r\n", msg.relayId, msg.resetTimeoutMs);
                 delay(msg.resetTimeoutMs);
                 pwrRelay.enable(prevState);
+                inf("PwrRelay (id:%d) has been reset back to state: %d\r\n", msg.relayId, prevState);
             }
             else
             {

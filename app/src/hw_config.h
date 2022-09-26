@@ -19,4 +19,10 @@
     // RELAY
     #define RELAY_IN_PIN_0  D1
     #define RELAY_IN_PIN_1  D2
+    #define RELAY_IN_PIN_2  D3
+    #define RELAY_IN_PIN_3  D4
+    #define RELAY_IN_PIN_4  D5
+    #define RELAY_IN_PIN_5  D6
+    #define RELAY_IN_PIN_6  D7
+    #define RELAY_IN_PIN_7  D8
 #endif //PWR_RELAYS_ON
