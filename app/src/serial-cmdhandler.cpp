@@ -48,19 +48,19 @@ void SerialCmdHandler::setCommands()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::cmdMenu(void)
 {
-    err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
+    err("\033[1;36m	>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<< \033[1;39m	");
     err("");
-    err("Options:");
-    err(" h                    Print the help message");
-    err(" pwr,id,[x,][r,(y)]   Set power relay state:");
-    err("                          id-RelayID number(0,1,2...) ");
-    err("                          x-Off/On(0-1); r-reset; y-reset timeout value");
-    err(" inf                  Print device information data");
-    err(" n,name               Change name of the USBMUX:");
-    err("                          name-new name string value presented in inf command");
-    err("                              -maximum 20 characters");
-    err(" r                    Reboot the device");
-    err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
+    err("\033[1;33m	Options:\033[1;39m");
+    err("\033[1;33m h                    \033[0;37m	Print the help message\033[1;39m");
+    err("\033[1;33m pwr,id,[x,][r,(y)]   \033[0;37m	Set power relay state:\033[1;39m");
+    err("                          \033[0;37m	id-RelayID number(0,1,2...) \033[1;39m");
+    err("                          \033[0;37m	x-Off/On(0-1); r-reset; y-reset timeout value\033[1;39m");
+    err("\033[1;33m inf                  \033[0;37m	Print device information data\033[1;39m");
+    err("\033[1;33m n,name               \033[0;37m	Change name of the USBMUX:\033[1;39m");
+    err("                          \033[0;37m	name-new name string value presented in inf command\033[1;39m");
+    err("                              \033[0;37m	-maximum 20 characters\033[1;39m");
+    err("\033[1;33m r                    \033[0;37m	Reboot the device\033[1;39m");
+    err("\033[1;36m	>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<< \033[1;39m	");
     err("\n");
     AddBuforMemory();
 }
@@ -71,7 +71,7 @@ void SerialCmdHandler::processCmdUsbChannel()
 
     CmdSetUsbChannelMsg msg;
 
-    err("USBMUX Channel command not supported!");
+    err("\033[1;31m	USBMUX Channel command not supported! \033[1;39m	");
     return;
 
     // Read command
@@ -91,7 +91,7 @@ void SerialCmdHandler::processCmdUsbChannel()
         }
         else
         {
-            err("No USBMUX Channel number argument");
+            err("\033[1;31m No USBMUX Channel number argument \033[1;39m");
             return;
         }
 
@@ -103,7 +103,7 @@ void SerialCmdHandler::processCmdUsbChannel()
         }
         else
         {
-            err("No USBMUX usb_id second argument");
+            err("\033[1;31m No USBMUX usb_id second argument \033[1;39m");
             return;
         }
     }
@@ -121,7 +121,7 @@ void SerialCmdHandler::processCmdPower()
     const uint8_t relayId = readIntArg();
     if (!argOk)
     {
-        err("No PowerRelayID applied!");
+        err("\033[1;31m No PowerRelayID applied! \033[1;39m");
         return;
     }
     msg.relayId = relayId;
@@ -147,7 +147,7 @@ void SerialCmdHandler::processCmdPower()
         }
         else
         {
-            inf("No PowerRelay[id:%d] timeout argument applied", relayId);
+            inf("\033[1;31m No PowerRelay[id:%d] timeout argument applied \033[1;39m", relayId);
         }
     }
     else
@@ -160,7 +160,7 @@ void SerialCmdHandler::processCmdPower()
         }
         else
         {
-            wrn("No PowerRelay argument applied");
+            wrn("\033[1;31m No PowerRelay argument applied \033[1;39m");
             return;
         }
     }
@@ -189,22 +189,22 @@ void SerialCmdHandler::processCmdWifi()
             }
             else
             {
-                err("No WifiPass argument applied");
+                err("\033[1;31m No WifiPass argument applied \033[1;39m");
                 return;
             }
         }
         else
         {
-            err("No WifiSsid argument applied");
+            err("\033[1;31m No WifiSsid argument applied \033[1;39m");
             return;
         }
     }
     else
     {
-        err("No WifiId argument applied");
+        err("\033[1;31m No WifiId argument applied \033[1;39m");
         return;
     }
-    inf("New Wifi AP data will be stored - channel:%d, ssid:%s, pass:%s",
+    inf("\033[1;32m	 New Wifi AP data will be stored - channel:%d, ssid:%s, pass:%s \033[1;39m",
         msg.wifiId, msg.wifiSsid.c_str(), msg.wifiPass.c_str());
     m_cmdr.processCmdMsg(msg);
     AddBuforMemory();
@@ -244,7 +244,7 @@ void SerialCmdHandler::processCmdReset()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdUnrecognized()
 {
-    wrn("Non recognized USBMUX command");
+    wrn("\033[1;31m Non recognized USBMUX command \033[1;39m");
     AddBuforMemory();
 }
 
