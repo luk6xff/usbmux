@@ -7,10 +7,11 @@
 #define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
 #define SERIAL_CMD_HANDLER_TERM2 '\r' // CR
+#define SERIAL_CMD_HANDLER_TERM3 '[A' // arrowup
 
 //------------------------------------------------------------------------------
 SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
-    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2), m_cmdr(cmdr)
+    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_TERM3), m_cmdr(cmdr)
 {
     // Setup callbacks for SerialCommand commands
     setCommands();

@@ -24,12 +24,14 @@
  */
 
 #include "CommandHandler.h"
+#include "string.h"
+#include <deque>
 /**
  * Constructor allowing to change default delim and term
  * Example: SerialCommand sCmd(" ", '\n', '\r');
  * Default are COMMANDHANDLER_DEFAULT_DELIM and COMMANDHANDLER_DEFAULT_TERM
  */
-CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm2)
+CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm2, char newterm3)
   : commandList(NULL),
     commandCount(0),
     relayList(NULL),
@@ -39,6 +41,7 @@ CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm
     wrapper_defaultHandler(NULL),
     term1(newterm1),  // asssign new terminator1 for commands
     term2(newterm2),  // asssign new terminator2 for commands
+    term3(newterm3),  // asssign new terminator3 for commands
     last(NULL),
     delim(newdelim) // assign new delimitor
 {
@@ -158,14 +161,23 @@ void CommandHandler::processChar(char inChar) {
   Serial.print(inChar);   // Echo back to serial stream, more user friendly.
   if (inChar == term3){
     //char buffer = buffer[COMMANDHANDLER_BUFFER-1];
-    Serial.printf("Received Command: %s\r\n", buffer);
+    if (deque_num == deque_t.size()){
+      deque_num = 0;
+    }
+    //char* buffer = new char[sizeof(buffer)];
+    memcpy(buffer, deque_t.at(deque_num), COMMANDHANDLER_BUFFER);
+    Serial.printf("Previous Command: %s\r\n", buffer);
+    deque_num ++;
   }
-  if (inChar == term1 || inChar == term2) {     // Check for the terminators (default: '\n' and '\r') meaning end of command
+  else if (inChar == term1 || inChar == term2) {     // Check for the terminators (default: '\n' and '\r') meaning end of command
     #ifdef COMMANDHANDLER_DEBUG
       Serial.print("Received: ");
       Serial.println(buffer);
     #else
       Serial.printf("Received Command: %s\r\n", buffer);
+      char* msg_deque = new char[COMMANDHANDLER_BUFFER-1];
+      memcpy(msg_deque, buffer, COMMANDHANDLER_BUFFER);
+      deque_t.push_front(msg_deque);
     #endif
 
     char *command = strtok_r(buffer, delim, &last);   // Search for command at start of buffer
