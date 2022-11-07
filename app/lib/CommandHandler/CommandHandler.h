@@ -27,11 +27,11 @@
 #define CommandHandler_h
 
 #if defined(WIRING) && WIRING >= 100
-  #include <Wiring.h>
+#include <Wiring.h>
 #elif defined(ARDUINO) && ARDUINO >= 100
-  #include <Arduino.h>
+#include <Arduino.h>
 #else
-  #include <WProgram.h>
+#include <WProgram.h>
 #endif
 #include <string.h>
 
@@ -54,104 +54,105 @@ typedef std::function<void(const char *, void *)> TRelayHandlerFunction;
 typedef std::function<void(const char *)> TDefaultHandlerFunction;
 typedef std::function<void(const char *, void *)> TDefaultWrapperHandlerFunction;
 
+class CommandHandler
+{
+public:
+  char buffer[COMMANDHANDLER_BUFFER + 1];
+  char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data                                                                                                                                      // Buffer of stored characters while waiting for terminator character
+  CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm1 = COMMANDHANDLER_DEFAULT_TERM1, const char newterm2 = COMMANDHANDLER_DEFAULT_TERM2); // Constructor
+  void addCommand(const char *command, TCmdHandlerFunction function);                                                                                                          // Add a command to the processing dictionary.
+  void addRelay(const char *command, TRelayHandlerFunction function, void *pt2Object = NULL);                                                                                  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
+  void setDefaultHandler(TDefaultHandlerFunction function);                                                                                                                    // A handler to call when no valid command received.
+  void setDefaultHandler(TDefaultWrapperHandlerFunction function, void *pt2Object);                                                                                            // A handler to call when no valid command received.
 
-class CommandHandler {
-  public:
-    CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm1 = COMMANDHANDLER_DEFAULT_TERM1, const char newterm2 = COMMANDHANDLER_DEFAULT_TERM2);   // Constructor
-    void addCommand(const char *command, TCmdHandlerFunction function);  // Add a command to the processing dictionary.
-    void addRelay(const char *command, TRelayHandlerFunction function, void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
-    void setDefaultHandler(TDefaultHandlerFunction function);   // A handler to call when no valid command received.
-    void setDefaultHandler(TDefaultWrapperHandlerFunction function, void* pt2Object);   // A handler to call when no valid command received.
+  void setInCmdSerial(Stream &inStream);    // define to which serial to send the read commands
+  void processSerial();                     // Process what on the in stream
+  void processSerial(Stream &inStream);     // Process what on the designated stream
+  void processString(const char *inString); // Process a String
+  void processChar(char inChar);            // Process a char
+  void clearBuffer();                       // Clears the input buffer.
+  char *remaining();                        // Returns pointer to remaining of the command buffer (for getting arguments to commands).
+  char *next();                             // Returns pointer to next token found in command buffer (for getting arguments to commands).
 
-    void setInCmdSerial(Stream &inStream); // define to which serial to send the read commands
-    void processSerial();  // Process what on the in stream
-    void processSerial(Stream &inStream);  // Process what on the designated stream
-    void processString(const char *inString); // Process a String
-    void processChar(char inChar); //Process a char
-    void clearBuffer();   // Clears the input buffer.
-    char *remaining();         // Returns pointer to remaining of the command buffer (for getting arguments to commands).
-    char *next();         // Returns pointer to next token found in command buffer (for getting arguments to commands).
+  // helpers to cast next into different types
+  bool argOk; // this variable is set after the below function are run, it tell you if thing went well
+  bool readBoolArg();
+  int readIntArg();
+  long readLongArg();
+  float readFloatArg();
+  double readDoubleArg();
+  char *readStringArg();
+  bool compareCheckStringArg(const char *stringToCompare);
 
-    // helpers to cast next into different types
-    bool argOk; // this variable is set after the below function are run, it tell you if thing went well
-    bool readBoolArg();
-    int readIntArg();
-    long readLongArg();
-    float readFloatArg();
-    double readDoubleArg();
-    char *readStringArg();
-    bool compareCheckStringArg(const char *stringToCompare);
+  // helpers to create a message
+  void setCmdHeader(const char *cmdHeader, bool addDelim = true); // setting a char to be added at the start of each out message (default "")
+  void initCmd();                                                 // initialize the command buffer  to build next message to be sent
 
-    //helpers to create a message
-    void setCmdHeader(const char *cmdHeader, bool addDelim = true); // setting a char to be added at the start of each out message (default "")
-    void initCmd(); // initialize the command buffer  to build next message to be sent
+  void clearCmd(); // clear the output command
+  void addCmdDelim();
+  void addCmdTerm();
 
-    void clearCmd(); // clear the output command
-    void addCmdDelim();
-    void addCmdTerm();
+  void addCmdBool(bool value);
+  void addCmdInt(int value);
+  void addCmdLong(long value);
 
-    void addCmdBool(bool value);
-    void addCmdInt(int value);
-    void addCmdLong(long value);
+  void setCmdDecimal(byte decimal);
+  void addCmdFloat(double value);
+  void addCmdFloat(float value, byte decimal);
+  void addCmdDouble(double value);
+  void addCmdDouble(double value, byte decimal);
 
-    void setCmdDecimal(byte decimal);
-    void addCmdFloat(double value);
-    void addCmdFloat(float value, byte decimal);
-    void addCmdDouble(double value);
-    void addCmdDouble(double value, byte decimal);
+  void addCmdString(const char *value);
 
-    void addCmdString(const char *value);
+  char *getOutCmd(); // get pointer to command buffer
 
-    char* getOutCmd(); // get pointer to command buffer
+  void setOutCmdSerial(Stream &outStream); // define to which serial to send the out commands
+  void sendCmdSerial();                    // send current command thought the Stream
+  void sendCmdSerial(Stream &outStream);   // send current command thought the Stream
 
-    void setOutCmdSerial(Stream &outStream); // define to which serial to send the out commands
-    void sendCmdSerial(); //send current command thought the Stream
-    void sendCmdSerial(Stream &outStream); //send current command thought the Stream
+private:
+  // Command/handler dictionary
+  struct CommandHandlerCallback
+  {
+    char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
+    TCmdHandlerFunction function;
+  };                                   // Data structure to hold Command/Handler function key-value pairs
+  CommandHandlerCallback *commandList; // Actual definition for command/handler array
+  byte commandCount;
 
-  private:
+  // Relay/handler dictionary
+  struct RelayHandlerCallback
+  {
+    char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
+    void *pt2Object;
+    TRelayHandlerFunction function;
+  };                               // Data structure to hold Relay/Handler function key-value pairs
+  RelayHandlerCallback *relayList; // Actual definition for Relay/handler array
+  byte relayCount;
 
-    // Command/handler dictionary
-    struct CommandHandlerCallback {
-      char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
-      TCmdHandlerFunction function;
-    };                                    // Data structure to hold Command/Handler function key-value pairs
-    CommandHandlerCallback *commandList;   // Actual definition for command/handler array
-    byte commandCount;
+  // Pointer to the default handler function
+  TDefaultHandlerFunction defaultHandler;
+  void *pt2defaultHandlerObject;
+  TDefaultWrapperHandlerFunction wrapper_defaultHandler;
 
-    // Relay/handler dictionary
-    struct RelayHandlerCallback {
-      char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
-      void* pt2Object;
-      TRelayHandlerFunction function;
-    };                                 // Data structure to hold Relay/Handler function key-value pairs
-    RelayHandlerCallback *relayList;   // Actual definition for Relay/handler array
-    byte relayCount;
+  const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
+  char term1;        // Character that signals end of command (default '\n')
+  char term2;        // Character that signals end of command (default '\r')
 
-    // Pointer to the default handler function
-    TDefaultHandlerFunction defaultHandler;
-    void* pt2defaultHandlerObject;
-    TDefaultWrapperHandlerFunction wrapper_defaultHandler;
-
-    const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
-    char term1;        // Character that signals end of command (default '\n')
-    char term2;        // Character that signals end of command (default '\r')
-    char buffer[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters while waiting for terminator character
-    byte bufPos;                        // Current position in the buffer
-    char *last;                         // State variable used by strtok_r during processing
-
-    char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data
-
-    char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
-
-    char command[COMMANDHANDLER_BUFFER + 1];
-    String commandString; // Out Command
-    String commandHeader; // header for out command
-    byte commandDecimal;
+  byte bufPos; // Current position in the buffer
+  char *last;  // State variable used by strtok_r during processing
 
 
-    // in and out default strem
-    Stream *inCmdStream;
-    Stream *outCmdStream;
+  char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
+
+  char command[COMMANDHANDLER_BUFFER + 1];
+  String commandString; // Out Command
+  String commandHeader; // header for out command
+  byte commandDecimal;
+
+  // in and out default strem
+  Stream *inCmdStream;
+  Stream *outCmdStream;
 };
 
-#endif //CommandHandler_h
+#endif // CommandHandler_h

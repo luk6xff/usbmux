@@ -11,7 +11,6 @@ class AppSettings
 {
 
 public:
-
     typedef struct
     {
         char ssid[WIFI_SETTINGS_LEN];
@@ -29,15 +28,15 @@ public:
     } Settings;
 
 public:
-    static AppSettings& instance();
+    static AppSettings &instance();
     void init();
 
-    const Settings& getDefaults();
-    const Settings& getCurrent();
+    const Settings &getDefaults();
+    const Settings &getCurrent();
 
     // Settings options
-    bool storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettings& ws);
-    bool storeName(const String& name);
+    bool storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettings &ws);
+    bool storeName(const String &name);
 
 private:
     AppSettings();
@@ -49,5 +48,4 @@ private:
 private:
     Settings defaultSettings;
     Settings currentSettings;
-
 };

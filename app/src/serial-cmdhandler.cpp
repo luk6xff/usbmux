@@ -1,25 +1,23 @@
 #include "serial-cmdhandler.h"
 #include "app-settings.h"
 #include "utils.h"
-
+#include <string.h>
 //------------------------------------------------------------------------------
 #define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
 #define SERIAL_CMD_HANDLER_TERM2 '\r' // CR
 
-
 //------------------------------------------------------------------------------
-SerialCmdHandler::SerialCmdHandler(Commander& cmdr)
-    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2)
-    , m_cmdr(cmdr)
+SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
+    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2), m_cmdr(cmdr)
 {
     // Setup callbacks for SerialCommand commands
     setCommands();
-    for (auto& cmd : m_commands)
+    for (auto &cmd : m_commands)
     {
         addCommand(cmd.first.c_str(), cmd.second);
     }
-
+    addCommand("[A", std::bind(&SerialCmdHandler::bufScroll, this));
     setDefaultHandler(std::bind(&SerialCmdHandler::processCmdUnrecognized, this));
     cmdMenu();
 }
@@ -34,14 +32,16 @@ void SerialCmdHandler::process()
 void SerialCmdHandler::setCommands()
 {
     m_commands = SerialCmdMap{
-                            {"h",   std::bind(&SerialCmdHandler::cmdMenu, this)},
-                            {"ch",  std::bind(&SerialCmdHandler::processCmdUsbChannel, this)},
-                            {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
-                            {"wf",  std::bind(&SerialCmdHandler::processCmdWifi, this)},
-                            {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
-                            {"r",   std::bind(&SerialCmdHandler::processCmdReset, this)},
-                            {"n",   std::bind(&SerialCmdHandler::processCmdSetName, this)}
-                            };
+        {"h", std::bind(&SerialCmdHandler::cmdMenu, this)},
+        {"ch", std::bind(&SerialCmdHandler::processCmdUsbChannel, this)},
+        {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
+        {"wf", std::bind(&SerialCmdHandler::processCmdWifi, this)},
+        {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
+        {"r", std::bind(&SerialCmdHandler::processCmdReset, this)},
+        {"n", std::bind(&SerialCmdHandler::processCmdSetName, this)}
+        /*{"es", std::bind(&SerialCmdHandler::bufScroll, this)}*/
+
+    };
 }
 
 //------------------------------------------------------------------------------
@@ -61,6 +61,7 @@ void SerialCmdHandler::cmdMenu(void)
     err(" r                    Reboot the device");
     err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
     err("\n");
+    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -107,6 +108,7 @@ void SerialCmdHandler::processCmdUsbChannel()
     }
 
     m_cmdr.processCmdMsg(msg);
+    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -146,16 +148,13 @@ void SerialCmdHandler::processCmdPower()
         {
             inf("No PowerRelay[id:%d] timeout argument applied", relayId);
         }
-
     }
     else
     {
         const bool pwrRelayState = readIntArg();
         if (argOk)
         {
-            msg.relayState = (pwrRelayState == false) ? \
-                            PowerRelay::RelayState::RELAY_OFF : \
-                            PowerRelay::RelayState::RELAY_ON;
+            msg.relayState = (pwrRelayState == false) ? PowerRelay::RelayState::RELAY_OFF : PowerRelay::RelayState::RELAY_ON;
             inf("PowerRelay[id:%d] state SET to: %s\r\n", relayId, pwrRelayState == false ? "RELAY_OFF" : "RELAY_ON");
         }
         else
@@ -166,6 +165,7 @@ void SerialCmdHandler::processCmdPower()
     }
 
     m_cmdr.processCmdMsg(msg);
+    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -173,7 +173,7 @@ void SerialCmdHandler::processCmdWifi()
 {
     CmdSetWifiConfigMsg msg;
 
-    const uint8_t wifiId  = readIntArg();
+    const uint8_t wifiId = readIntArg();
     if (argOk)
     {
         msg.wifiId = wifiId;
@@ -206,6 +206,7 @@ void SerialCmdHandler::processCmdWifi()
     inf("New Wifi AP data will be stored - channel:%d, ssid:%s, pass:%s",
         msg.wifiId, msg.wifiSsid.c_str(), msg.wifiPass.c_str());
     m_cmdr.processCmdMsg(msg);
+    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -213,6 +214,7 @@ void SerialCmdHandler::processCmdInfo()
 {
     CmdDeviceInfoMsg msg;
     m_cmdr.processCmdMsg(msg);
+    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -222,11 +224,12 @@ void SerialCmdHandler::processCmdSetName()
     String name = readStringArg();
     if (name.length() > 19)
     {
-        name = name.substring(0,NAME_LEN);
+        name = name.substring(0, NAME_LEN);
     }
     inf("Matched Name: %s", name.c_str());
     CmdDeviceSetNameMsg msg(name);
     m_cmdr.processCmdMsg(msg);
+    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -234,13 +237,33 @@ void SerialCmdHandler::processCmdReset()
 {
     CmdDeviceResetMsg msg;
     m_cmdr.processCmdMsg(msg);
+    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdUnrecognized()
 {
     wrn("Non recognized USBMUX command");
+    AddBuforMemory();
+}
+
+//------------------------------------------------------------------------------
+void SerialCmdHandler::bufScroll(void)
+{
+    const char* temp(SerialCmdHandler::buforCmd.ScrollMemory());
+    err("ostatnia komenda:");
+    err(temp);
 }
 
 
-//------------------------------------------------------------------------------
+
+void SerialCmdHandler::AddBuforMemory()
+{
+    //char[10] nnn = locbuffer.c_str();
+    memcpy(bufferTemp, buffer, COMMANDHANDLER_BUFFER);
+    SerialCmdHandler::buforCmd.AddMemory(bufferTemp);
+    err(bufferTemp);
+    err(buffer);
+}
+
+
