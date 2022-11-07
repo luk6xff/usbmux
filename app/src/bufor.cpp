@@ -3,8 +3,8 @@
 #include <string.h>
 
 void buforCC::AddMemory(char* msg) {
-    char* msg_cp;
-    strcpy(msg_cp, msg);
+    //char* msg_cp;
+    //strcpy(msg_cp, msg);
     buforCC::BuforMemory.push_back(msg);
 }
 
@@ -14,6 +14,5 @@ char* buforCC::ScrollMemory() {
         buforCC::BuforIndex = 0;
     }
     return buforCC::BuforMemory.at(buforCC::BuforIndex);
-    //return buforCC::BuforMemory.at(0);
 } 
 

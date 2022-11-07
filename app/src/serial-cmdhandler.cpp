@@ -2,6 +2,7 @@
 #include "app-settings.h"
 #include "utils.h"
 #include <string.h>
+#include <deque>
 //------------------------------------------------------------------------------
 #define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
@@ -250,19 +251,25 @@ void SerialCmdHandler::processCmdUnrecognized()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::bufScroll(void)
 {
-    const char* temp(SerialCmdHandler::buforCmd.ScrollMemory());
+    deque_index ++;
+    if (deque_index == deque_test.size()){
+        deque_index = 0;
+    }
     err("ostatnia komenda:");
-    err(temp);
+    err(deque_test.at(deque_index));
+    //err(deque_test);
 }
 
 
 
 void SerialCmdHandler::AddBuforMemory()
 {
+    
     //char[10] nnn = locbuffer.c_str();
-    memcpy(bufferTemp, buffer, COMMANDHANDLER_BUFFER);
-    SerialCmdHandler::buforCmd.AddMemory(bufferTemp);
-    err(bufferTemp);
+    //char* msg_cp = buffer;
+    memcpy(msg_cp, buffer, COMMANDHANDLER_BUFFER);
+    deque_test.push_back(msg_cp);
+    err(msg_cp);
     err(buffer);
 }
 

@@ -6,6 +6,7 @@
 #include "bufor.h"
 #include "CommandHandler.h"
 #include "commander.h"
+#include <deque>
 
 using SerialCmdMap = std::map<String, std::function<void(void)>>;
 /**
@@ -18,6 +19,8 @@ public:
 
     void process();
     void AddBuforMemory();
+    std::deque<char*> deque_test;
+    int deque_index = 0;
 
 private:
     void setCommands();
