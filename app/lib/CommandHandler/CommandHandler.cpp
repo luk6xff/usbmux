@@ -126,8 +126,8 @@ void CommandHandler::processSerial(Stream &inStream) {
   while (inStream.available() > 0) {
     char inChar = inStream.read();   // Read single available character, there may be more waiting
     #ifdef COMMANDHANDLER_DEBUG
-      Serial.print("Serial: ");
-      Serial.println(inChar);   // Echo back to serial stream
+        Serial.print("Serial: ");
+        Serial.println(inChar);   // Echo back to serial stream
     #endif
     processChar(inChar);
   }
@@ -156,6 +156,10 @@ void CommandHandler::processString(const char *inString) {
  */
 void CommandHandler::processChar(char inChar) {
   Serial.print(inChar);   // Echo back to serial stream, more user friendly.
+  if (inChar == term3){
+    //char buffer = buffer[COMMANDHANDLER_BUFFER-1];
+    Serial.printf("Received Command: %s\r\n", buffer);
+  }
   if (inChar == term1 || inChar == term2) {     // Check for the terminators (default: '\n' and '\r') meaning end of command
     #ifdef COMMANDHANDLER_DEBUG
       Serial.print("Received: ");

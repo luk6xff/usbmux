@@ -257,20 +257,15 @@ void SerialCmdHandler::bufScroll(void)
     err("ostatnia komenda:");
     err(deque_test.at(deque_index));
     deque_index ++;
-    //err(deque_test);
 }
 
 
 
 void SerialCmdHandler::AddBuforMemory()
 {
-    
-    //char[10] nnn = locbuffer.c_str();
     char* msg_cp = new char[sizeof(buffer)];
     memcpy(msg_cp, buffer, COMMANDHANDLER_BUFFER);
     deque_test.push_front(msg_cp);
-    err(msg_cp);
-    err(buffer);
 }
 
 
