@@ -31,7 +31,7 @@
  * Example: SerialCommand sCmd(" ", '\n', '\r');
  * Default are COMMANDHANDLER_DEFAULT_DELIM and COMMANDHANDLER_DEFAULT_TERM
  */
-CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm2, char newterm3)
+CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm2, char newterm3, char newterm4)
   : commandList(NULL),
     commandCount(0),
     relayList(NULL),
@@ -42,6 +42,7 @@ CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm
     term1(newterm1),  // asssign new terminator1 for commands
     term2(newterm2),  // asssign new terminator2 for commands
     term3(newterm3),  // asssign new terminator3 for commands
+    term4(newterm4),
     last(NULL),
     delim(newdelim) // assign new delimitor
 {
@@ -159,6 +160,12 @@ void CommandHandler::processString(const char *inString) {
  */
 void CommandHandler::processChar(char inChar) {
   Serial.print(inChar);   // Echo back to serial stream, more user friendly.
+  if (inChar == term4){
+    Serial.print(" ");
+    buffer[bufPos-1] = STRING_NULL_TERM; 
+    bufPos--;
+    Serial.print("\b");
+  }
   if (inChar == term3){
     //char buffer = buffer[COMMANDHANDLER_BUFFER-1];
     if (deque_num == deque_t.size()){

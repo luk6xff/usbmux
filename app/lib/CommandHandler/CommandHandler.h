@@ -45,6 +45,7 @@
 #define COMMANDHANDLER_DEFAULT_TERM1 '\n'
 #define COMMANDHANDLER_DEFAULT_TERM2 '\r'
 #define COMMANDHANDLER_DEFAULT_TERM3 '[A'
+#define COMMANDHANDLER_DEFAULT_TERM4 '\b'
 // The null term for string
 #define STRING_NULL_TERM 0
 
@@ -63,7 +64,7 @@ public:
   int deque_num = 0;
   char buffer[COMMANDHANDLER_BUFFER + 1];
   char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data                                                                                                                                      // Buffer of stored characters while waiting for terminator character
-  CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm1 = COMMANDHANDLER_DEFAULT_TERM1, const char newterm2 = COMMANDHANDLER_DEFAULT_TERM2, const char newterm3 = COMMANDHANDLER_DEFAULT_TERM3); // Constructor
+  CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm1 = COMMANDHANDLER_DEFAULT_TERM1, const char newterm2 = COMMANDHANDLER_DEFAULT_TERM2, const char newterm3 = COMMANDHANDLER_DEFAULT_TERM3, const char newterm4 = COMMANDHANDLER_DEFAULT_TERM4); // Constructor
   void addCommand(const char *command, TCmdHandlerFunction function);                                                                                                          // Add a command to the processing dictionary.
   void addRelay(const char *command, TRelayHandlerFunction function, void *pt2Object = NULL);                                                                                  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
   void setDefaultHandler(TDefaultHandlerFunction function);                                                                                                                    // A handler to call when no valid command received.
@@ -143,6 +144,7 @@ private:
   char term1;        // Character that signals end of command (default '\n')
   char term2;        // Character that signals end of command (default '\r')
   char term3;        // arrow up
+  char term4;        // backspace
 
   byte bufPos; // Current position in the buffer
   char *last;  // State variable used by strtok_r during processing
