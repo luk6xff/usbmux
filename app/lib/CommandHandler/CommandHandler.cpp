@@ -166,7 +166,9 @@ void CommandHandler::processChar(char inChar) {
     }
     //char* buffer = new char[sizeof(buffer)];
     memcpy(buffer, deque_t.at(deque_num), COMMANDHANDLER_BUFFER);
+    Serial.print("\n");
     Serial.printf("Previous Command: %s\r\n", buffer);
+    Serial.print("\n");
     deque_num ++;
   }
   else if (inChar == term1 || inChar == term2) {     // Check for the terminators (default: '\n' and '\r') meaning end of command
