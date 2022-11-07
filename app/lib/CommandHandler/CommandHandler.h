@@ -138,6 +138,7 @@ private:
   const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
   char term1;        // Character that signals end of command (default '\n')
   char term2;        // Character that signals end of command (default '\r')
+  char term3 = '[a';
 
   byte bufPos; // Current position in the buffer
   char *last;  // State variable used by strtok_r during processing
