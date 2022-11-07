@@ -3,7 +3,6 @@
 #include <Arduino.h>
 
 #include <map>
-#include "bufor.h"
 #include "CommandHandler.h"
 #include "commander.h"
 #include <deque>
@@ -37,6 +36,5 @@ private:
 
 private:
     Commander &m_cmdr;
-    buforCC buforCmd;
     SerialCmdMap m_commands;
 };

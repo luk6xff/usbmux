@@ -251,12 +251,12 @@ void SerialCmdHandler::processCmdUnrecognized()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::bufScroll(void)
 {
-    deque_index ++;
     if (deque_index == deque_test.size()){
         deque_index = 0;
     }
     err("ostatnia komenda:");
     err(deque_test.at(deque_index));
+    deque_index ++;
     //err(deque_test);
 }
 
@@ -266,9 +266,9 @@ void SerialCmdHandler::AddBuforMemory()
 {
     
     //char[10] nnn = locbuffer.c_str();
-    //char* msg_cp = buffer;
+    char* msg_cp = new char[sizeof(buffer)];
     memcpy(msg_cp, buffer, COMMANDHANDLER_BUFFER);
-    deque_test.push_back(msg_cp);
+    deque_test.push_front(msg_cp);
     err(msg_cp);
     err(buffer);
 }
