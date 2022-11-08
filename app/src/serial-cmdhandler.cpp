@@ -1,8 +1,6 @@
 #include "serial-cmdhandler.h"
 #include "app-settings.h"
 #include "utils.h"
-#include <string.h>
-#include <deque>
 //------------------------------------------------------------------------------
 #define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
@@ -20,7 +18,6 @@ SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
     {
         addCommand(cmd.first.c_str(), cmd.second);
     }
-    addCommand("[A", std::bind(&SerialCmdHandler::bufScroll, this));
     setDefaultHandler(std::bind(&SerialCmdHandler::processCmdUnrecognized, this));
     cmdMenu();
 }
@@ -42,8 +39,6 @@ void SerialCmdHandler::setCommands()
         {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
         {"r", std::bind(&SerialCmdHandler::processCmdReset, this)},
         {"n", std::bind(&SerialCmdHandler::processCmdSetName, this)}
-        /*{"es", std::bind(&SerialCmdHandler::bufScroll, this)}*/
-
     };
 }
 
@@ -64,7 +59,6 @@ void SerialCmdHandler::cmdMenu(void)
     err("\033[1;33m r                    \033[0;37m	Reboot the device\033[1;39m");
     err("\033[1;36m	>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<< \033[1;39m	");
     err("\n");
-    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +105,6 @@ void SerialCmdHandler::processCmdUsbChannel()
     }
 
     m_cmdr.processCmdMsg(msg);
-    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -168,7 +161,6 @@ void SerialCmdHandler::processCmdPower()
     }
 
     m_cmdr.processCmdMsg(msg);
-    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -209,7 +201,6 @@ void SerialCmdHandler::processCmdWifi()
     inf("\033[1;32m	 New Wifi AP data will be stored - channel:%d, ssid:%s, pass:%s \033[1;39m",
         msg.wifiId, msg.wifiSsid.c_str(), msg.wifiPass.c_str());
     m_cmdr.processCmdMsg(msg);
-    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -217,7 +208,6 @@ void SerialCmdHandler::processCmdInfo()
 {
     CmdDeviceInfoMsg msg;
     m_cmdr.processCmdMsg(msg);
-    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -232,7 +222,6 @@ void SerialCmdHandler::processCmdSetName()
     inf("Matched Name: %s", name.c_str());
     CmdDeviceSetNameMsg msg(name);
     m_cmdr.processCmdMsg(msg);
-    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
@@ -240,34 +229,14 @@ void SerialCmdHandler::processCmdReset()
 {
     CmdDeviceResetMsg msg;
     m_cmdr.processCmdMsg(msg);
-    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdUnrecognized()
 {
     wrn("\033[1;31m Non recognized USBMUX command \033[1;39m");
-    AddBuforMemory();
 }
 
 //------------------------------------------------------------------------------
-void SerialCmdHandler::bufScroll(void)
-{
-    if (deque_index == deque_test.size()){
-        deque_index = 0;
-    }
-    err("ostatnia komenda:");
-    err(deque_test.at(deque_index));
-    deque_index ++;
-}
-
-
-
-void SerialCmdHandler::AddBuforMemory()
-{
-    char* msg_cp = new char[sizeof(buffer)];
-    memcpy(msg_cp, buffer, COMMANDHANDLER_BUFFER);
-    deque_test.push_front(msg_cp);
-}
 
 

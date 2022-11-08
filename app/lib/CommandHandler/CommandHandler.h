@@ -61,9 +61,7 @@ class CommandHandler
 {
 public:
   std::deque<char*> deque_t;
-  int deque_num = 0;
-  char buffer[COMMANDHANDLER_BUFFER + 1];
-  char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data                                                                                                                                      // Buffer of stored characters while waiting for terminator character
+  int deque_num = 0;                                                                                                                                   // Buffer of stored characters while waiting for terminator character
   CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm1 = COMMANDHANDLER_DEFAULT_TERM1, const char newterm2 = COMMANDHANDLER_DEFAULT_TERM2, const char newterm3 = COMMANDHANDLER_DEFAULT_TERM3, const char newterm4 = COMMANDHANDLER_DEFAULT_TERM4); // Constructor
   void addCommand(const char *command, TCmdHandlerFunction function);                                                                                                          // Add a command to the processing dictionary.
   void addRelay(const char *command, TRelayHandlerFunction function, void *pt2Object = NULL);                                                                                  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
@@ -116,6 +114,8 @@ public:
   void sendCmdSerial(Stream &outStream);   // send current command thought the Stream
 
 private:
+  char buffer[COMMANDHANDLER_BUFFER + 1];
+  char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data   
   // Command/handler dictionary
   struct CommandHandlerCallback
   {

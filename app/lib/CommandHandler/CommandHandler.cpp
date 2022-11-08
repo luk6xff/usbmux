@@ -42,7 +42,7 @@ CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm
     term1(newterm1),  // asssign new terminator1 for commands
     term2(newterm2),  // asssign new terminator2 for commands
     term3(newterm3),  // asssign new terminator3 for commands
-    term4(newterm4),
+    term4(newterm4),  // asssign new terminator4 for commands
     last(NULL),
     delim(newdelim) // assign new delimitor
 {
@@ -160,18 +160,16 @@ void CommandHandler::processString(const char *inString) {
  */
 void CommandHandler::processChar(char inChar) {
   Serial.print(inChar);   // Echo back to serial stream, more user friendly.
-  if (inChar == term4){
+  if (inChar == term4 && bufPos>=0){
     Serial.print(" ");
     buffer[bufPos-1] = STRING_NULL_TERM; 
     bufPos--;
     Serial.print("\b");
   }
   if (inChar == term3){
-    //char buffer = buffer[COMMANDHANDLER_BUFFER-1];
     if (deque_num == deque_t.size()){
       deque_num = 0;
     }
-    //char* buffer = new char[sizeof(buffer)];
     memcpy(buffer, deque_t.at(deque_num), COMMANDHANDLER_BUFFER);
     Serial.print("\n");
     Serial.printf("Previous Command: %s\r\n", buffer);
