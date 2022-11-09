@@ -160,20 +160,23 @@ void CommandHandler::processString(const char *inString) {
  */
 void CommandHandler::processChar(char inChar) {
   Serial.print(inChar);   // Echo back to serial stream, more user friendly.
-  if (inChar == term4 && bufPos>=0){
+  if (inChar == term4 && bufPos>0){
     Serial.print(" ");
-    buffer[bufPos-1] = STRING_NULL_TERM; 
     bufPos--;
-    Serial.print("\b");
+    buffer[bufPos] = STRING_NULL_TERM; 
+    Serial.print("\b");    
   }
-  if (inChar == term3){
+  else if (inChar == term4 && bufPos==0){
+    Serial.print(" ");
+  }
+  else if (inChar == term3){
     if (deque_num == deque_t.size()){
       deque_num = 0;
     }
     memcpy(buffer, deque_t.at(deque_num), COMMANDHANDLER_BUFFER);
-    Serial.print("\n");
-    Serial.printf("Previous Command: %s\r\n", buffer);
-    Serial.print("\n");
+    Serial.printf("\33[2K\r");
+    Serial.printf("\033[1;33m	Previous Command: \033[1;39m %s\r\n", buffer);
+    bufPos = std::size(buffer) -1;
     deque_num ++;
   }
   else if (inChar == term1 || inChar == term2) {     // Check for the terminators (default: '\n' and '\r') meaning end of command
@@ -185,6 +188,7 @@ void CommandHandler::processChar(char inChar) {
       char* msg_deque = new char[COMMANDHANDLER_BUFFER-1];
       memcpy(msg_deque, buffer, COMMANDHANDLER_BUFFER);
       deque_t.push_front(msg_deque);
+      deque_num = 0;
     #endif
 
     char *command = strtok_r(buffer, delim, &last);   // Search for command at start of buffer
