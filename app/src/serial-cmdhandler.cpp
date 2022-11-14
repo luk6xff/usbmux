@@ -7,10 +7,10 @@
 #define SERIAL_CMD_HANDLER_TERM2 '\r' // CR
 #define SERIAL_CMD_HANDLER_TERM3 '[A' // arrowup
 #define SERIAL_CMD_HANDLER_TERM4 '\b' // backspace
-
+#define SERIAL_CMD_HANDLER_TERM5 '[B' // arrowdown
 //------------------------------------------------------------------------------
 SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
-    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_TERM3, SERIAL_CMD_HANDLER_TERM4), m_cmdr(cmdr)
+    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_TERM3, SERIAL_CMD_HANDLER_TERM4, SERIAL_CMD_HANDLER_TERM5), m_cmdr(cmdr)
 {
     // Setup callbacks for SerialCommand commands
     setCommands();
@@ -38,8 +38,7 @@ void SerialCmdHandler::setCommands()
         {"wf", std::bind(&SerialCmdHandler::processCmdWifi, this)},
         {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
         {"r", std::bind(&SerialCmdHandler::processCmdReset, this)},
-        {"n", std::bind(&SerialCmdHandler::processCmdSetName, this)}
-    };
+        {"n", std::bind(&SerialCmdHandler::processCmdSetName, this)}};
 }
 
 //------------------------------------------------------------------------------
@@ -238,5 +237,3 @@ void SerialCmdHandler::processCmdUnrecognized()
 }
 
 //------------------------------------------------------------------------------
-
-
