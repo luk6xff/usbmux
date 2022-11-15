@@ -30,6 +30,8 @@ private:
     void processCmdSetName();
     void processCmdReset();
     void processCmdUnrecognized();
+    void processCmdRelayGetSate();
+    
 
 private:
     Commander &m_cmdr;

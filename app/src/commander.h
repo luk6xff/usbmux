@@ -12,6 +12,7 @@
 
 ///< Forward declaration of Actual Command classes
 class CommandMsg;
+class CmdGetPwrRelayMsg;
 class CmdSetUsbChannelMsg;
 class CmdSetPwrRelayMsg;
 class CmdSetWifiConfigMsg;
@@ -27,6 +28,7 @@ class CmdHandler
 public:
     explicit CmdHandler();
     void handle(CmdSetUsbChannelMsg& msg);
+    void handle(CmdGetPwrRelayMsg& msg);
     void handle(CmdSetPwrRelayMsg& msg);
     void handle(CmdSetWifiConfigMsg& msg);
     void handle(CmdDeviceInfoMsg& msg);
@@ -97,6 +99,21 @@ public:
     UsbMuxDriver::UsbChannelNumber channelNumber;
     UsbMuxDriver::UsbIdState usbIdState;
     bool disableChannels;
+};
+//------------------------------------------------------------------------------
+class CmdGetPwrRelayMsg : public CommandMsgBase<CmdGetPwrRelayMsg>
+{
+public:
+    CmdGetPwrRelayMsg()
+        :  relayId(0)
+    {
+    }
+    CmdGetPwrRelayMsg(const uint8_t relayId)
+        : relayId(relayId)
+    {
+    }
+public:
+    uint8_t relayId;
 };
 
 

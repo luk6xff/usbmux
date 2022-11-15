@@ -19,6 +19,7 @@ SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
         addCommand(cmd.first.c_str(), cmd.second);
     }
     setDefaultHandler(std::bind(&SerialCmdHandler::processCmdUnrecognized, this));
+    addCommand("st", std::bind(&SerialCmdHandler::processCmdRelayGetSate, this));
     cmdMenu();
 }
 
@@ -40,7 +41,19 @@ void SerialCmdHandler::setCommands()
         {"r", std::bind(&SerialCmdHandler::processCmdReset, this)},
         {"n", std::bind(&SerialCmdHandler::processCmdSetName, this)}};
 }
-
+//------------------------------------------------------------------------------
+void SerialCmdHandler::processCmdRelayGetSate()
+{
+    CmdGetPwrRelayMsg msg;
+    const uint8_t relayId = readIntArg();
+    if (!argOk)
+    {
+        err("\033[1;31m No PowerRelayID applied! \033[1;39m");
+        return;
+    }
+    msg.relayId = relayId;
+    m_cmdr.processCmdMsg(msg);
+}
 //------------------------------------------------------------------------------
 void SerialCmdHandler::cmdMenu(void)
 {
@@ -56,6 +69,8 @@ void SerialCmdHandler::cmdMenu(void)
     err("                          \033[0;37m	name-new name string value presented in inf command\033[1;39m");
     err("                              \033[0;37m	-maximum 20 characters\033[1;39m");
     err("\033[1;33m r                    \033[0;37m	Reboot the device\033[1;39m");
+    err("\033[1;33m st,id   \033[0;37m	Checks power relay state:\033[1;39m");
+    err("                          \033[0;37m	id-RelayID number(0,1,2...) \033[1;39m");
     err("\033[1;36m	>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<< \033[1;39m	");
     err("\n");
 }
@@ -102,6 +117,7 @@ void SerialCmdHandler::processCmdUsbChannel()
             return;
         }
     }
+
 
     m_cmdr.processCmdMsg(msg);
 }
