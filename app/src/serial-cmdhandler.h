@@ -3,6 +3,7 @@
 #include <Arduino.h>
 
 #include <map>
+#include <vector>
 #include "CommandHandler.h"
 #include "commander.h"
 
@@ -33,5 +34,6 @@ private:
 
 private:
     Commander &m_cmdr;
+    std::unique_ptr<std::vector<PowerRelay>>* pwrRelays = &m_cmdr.m_cmdHandler.m_pwrRelays;
     SerialCmdMap m_commands;
 };

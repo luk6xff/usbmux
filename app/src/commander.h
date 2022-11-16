@@ -25,6 +25,7 @@ class CmdDeviceSetNameMsg;
 class CmdHandler
 {
 public:
+    std::unique_ptr<std::vector<PowerRelay>> m_pwrRelays;
     explicit CmdHandler();
     void handle(CmdSetUsbChannelMsg& msg);
     void handle(CmdSetPwrRelayMsg& msg);
@@ -36,7 +37,7 @@ public:
 
 private:
     std::unique_ptr<UsbMuxDriver> m_usbMux;
-    std::unique_ptr<std::vector<PowerRelay>> m_pwrRelays;
+
 };
 
 
@@ -191,7 +192,7 @@ class Commander
 {
 
 public:
-
+    CmdHandler m_cmdHandler;
     /**
      * @brief Ctor
      */
@@ -203,5 +204,5 @@ private:
 
 
 private:
-    CmdHandler m_cmdHandler;
+
 };
