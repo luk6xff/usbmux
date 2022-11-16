@@ -60,7 +60,7 @@ void CmdHandler::handle(CmdSetUsbChannelMsg& msg)
 //------------------------------------------------------------------------------
 void CmdHandler::handle(CmdGetPwrRelayMsg& msg)
 {
-    if (!m_pwrRelays)
+    if (!m_pwrRelays) // Check if m_pwrRelays has been created
     {
         err("PowerRelays object has not been created, exiting...");
     }
@@ -76,6 +76,7 @@ void CmdHandler::handle(CmdGetPwrRelayMsg& msg)
             // Extract a PwrRelay reference.
             auto& pwrRelay = (*m_pwrRelays)[msg.relayId];
             const PowerRelay::RelayState m_state = pwrRelay.state();
+            // Check relay state if 0 first message if 1 second
             if (m_state==0)
             {
                 inf("PowerRelay (id:%d) state SET to: RELAY_OFF", msg.relayId);

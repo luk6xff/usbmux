@@ -106,7 +106,7 @@ class CmdGetPwrRelayMsg : public CommandMsgBase<CmdGetPwrRelayMsg>
 {
 public:
     CmdGetPwrRelayMsg()
-        :  relayId(0)
+        :  relayId(0) //relay id needed in relay message
     {
     }
     CmdGetPwrRelayMsg(const uint8_t relayId)

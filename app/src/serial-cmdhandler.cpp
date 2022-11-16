@@ -19,7 +19,7 @@ SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
         addCommand(cmd.first.c_str(), cmd.second);
     }
     setDefaultHandler(std::bind(&SerialCmdHandler::processCmdUnrecognized, this));
-    addCommand("st", std::bind(&SerialCmdHandler::processCmdRelayGetSate, this));
+    addCommand("st", std::bind(&SerialCmdHandler::processCmdRelayGetSate, this)); // adds new command st for relay state check
     cmdMenu();
 }
 
@@ -44,15 +44,15 @@ void SerialCmdHandler::setCommands()
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdRelayGetSate()
 {
-    CmdGetPwrRelayMsg msg;
-    const uint8_t relayId = readIntArg();
-    if (!argOk)
+    CmdGetPwrRelayMsg msg; // declares message for handler
+    const uint8_t relayId = readIntArg(); // relay_id 
+    if (!argOk) // checks if there is any relay arguments
     {
         err("\033[1;31m No PowerRelayID applied! \033[1;39m");
         return;
     }
-    msg.relayId = relayId;
-    m_cmdr.processCmdMsg(msg);
+    msg.relayId = relayId; 
+    m_cmdr.processCmdMsg(msg); // process relay message
 }
 //------------------------------------------------------------------------------
 void SerialCmdHandler::cmdMenu(void)
