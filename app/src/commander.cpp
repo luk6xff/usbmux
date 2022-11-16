@@ -57,7 +57,36 @@ void CmdHandler::handle(CmdSetUsbChannelMsg& msg)
         }
     }
 }
-
+//------------------------------------------------------------------------------
+void CmdHandler::handle(CmdGetPwrRelayMsg& msg)
+{
+    if (!m_pwrRelays)
+    {
+        err("PowerRelays object has not been created, exiting...");
+    }
+    else
+    {
+        // Check if ID is valid ?
+        if (msg.relayId >= m_pwrRelays->size())
+        {
+            err("PwrRelayId value must be between (0-%d) !!!\r\n", m_pwrRelays->size()-1);
+        }  
+        else
+        {
+            // Extract a PwrRelay reference.
+            auto& pwrRelay = (*m_pwrRelays)[msg.relayId];
+            const PowerRelay::RelayState m_state = pwrRelay.state();
+            if (m_state==0)
+            {
+                inf("PwrRelay (id:%d) state SET to: RELAY_OFF", msg.relayId);
+            }
+            else
+            {
+                inf("PwrRelay (id:%d) state SET to: RELAY_ON", msg.relayId);
+            }  
+        }
+    }
+}
 //------------------------------------------------------------------------------
 void CmdHandler::handle(CmdSetPwrRelayMsg& msg)
 {
