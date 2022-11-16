@@ -78,11 +78,11 @@ void CmdHandler::handle(CmdGetPwrRelayMsg& msg)
             const PowerRelay::RelayState m_state = pwrRelay.state();
             if (m_state==0)
             {
-                inf("PwrRelay (id:%d) state SET to: RELAY_OFF", msg.relayId);
+                inf("PowerRelay (id:%d) state SET to: RELAY_OFF", msg.relayId);
             }
             else
             {
-                inf("PwrRelay (id:%d) state SET to: RELAY_ON", msg.relayId);
+                inf("PowerRelay (id:%d) state SET to: RELAY_ON", msg.relayId);
             }  
         }
     }
