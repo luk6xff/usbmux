@@ -10,7 +10,7 @@ AppSettings::AppSettings()
     defaultSettings =
         {
             .magic = 0x4C554B36, // LUK6
-            .version = 0x00000007,
+            .version = 0x00000008,
         };
 
     WifiSettings wifiDefault;
