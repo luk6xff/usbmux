@@ -26,7 +26,6 @@ class CmdDeviceSetNameMsg;
 class CmdHandler
 {
 public:
-    std::unique_ptr<std::vector<PowerRelay>> m_pwrRelays;
     explicit CmdHandler();
     void handle(CmdSetUsbChannelMsg& msg);
     void handle(CmdGetPwrRelayMsg& msg);
@@ -39,7 +38,7 @@ public:
 
 private:
     std::unique_ptr<UsbMuxDriver> m_usbMux;
-
+    std::unique_ptr<std::vector<PowerRelay>> m_pwrRelays;
 };
 
 

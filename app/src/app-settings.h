@@ -49,5 +49,5 @@ private:
 private:
     Settings defaultSettings;
     Settings currentSettings;
-    
+
 };

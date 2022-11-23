@@ -12,7 +12,7 @@
 
 
 //------------------------------------------------------------------------------
-SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
+SerialCmdHandler::SerialCmdHandler(Commander& cmdr)
     : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_TERM3, SERIAL_CMD_HANDLER_TERM4, SERIAL_CMD_HANDLER_TERM5)
     , m_cmdr(cmdr)
 {
@@ -22,6 +22,7 @@ SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
     {
         addCommand(cmd.first.c_str(), cmd.second);
     }
+    
     setDefaultHandler(std::bind(&SerialCmdHandler::processCmdUnrecognized, this));
     addCommand("st", std::bind(&SerialCmdHandler::processCmdRelayGetSate, this)); // adds new command st for relay state check
     cmdMenu();
