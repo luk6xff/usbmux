@@ -171,7 +171,9 @@ void SerialCmdHandler::processCmdPower()
         const bool pwrRelayState = readIntArg();
         if (argOk)
         {
-            msg.relayState = (pwrRelayState == false) ? PowerRelay::RelayState::RELAY_OFF : PowerRelay::RelayState::RELAY_ON;
+            msg.relayState = (pwrRelayState == false) ? \
+                            PowerRelay::RelayState::RELAY_OFF : \
+                            PowerRelay::RelayState::RELAY_ON;
             inf("PowerRelay[id:%d] state SET to: %s\r\n", relayId, pwrRelayState == false ? "RELAY_OFF" : "RELAY_ON");
         }
         else
@@ -189,7 +191,7 @@ void SerialCmdHandler::processCmdWifi()
 {
     CmdSetWifiConfigMsg msg;
 
-    const uint8_t wifiId = readIntArg();
+    const uint8_t wifiId  = readIntArg();
     if (argOk)
     {
         msg.wifiId = wifiId;
@@ -238,7 +240,7 @@ void SerialCmdHandler::processCmdSetName()
     String name = readStringArg();
     if (name.length() > 19)
     {
-        name = name.substring(0, NAME_LEN);
+        name = name.substring(0,NAME_LEN);
     }
     inf("Matched Name: %s", name.c_str());
     CmdDeviceSetNameMsg msg(name);
