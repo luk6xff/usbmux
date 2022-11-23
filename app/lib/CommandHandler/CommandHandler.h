@@ -127,18 +127,17 @@ class CommandHandler {
     byte commandCount;
 
     // Relay/handler dictionary
-    struct RelayHandlerCallback
-    {
+    struct RelayHandlerCallback {
       char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
-      void *pt2Object;
+      void* pt2Object;
       TRelayHandlerFunction function;
-    };                               // Data structure to hold Relay/Handler function key-value pairs
-    RelayHandlerCallback *relayList; // Actual definition for Relay/handler array
+    };                                 // Data structure to hold Relay/Handler function key-value pairs
+    RelayHandlerCallback *relayList;   // Actual definition for Relay/handler array
     byte relayCount;
 
     // Pointer to the default handler function
     TDefaultHandlerFunction defaultHandler;
-    void *pt2defaultHandlerObject;
+    void* pt2defaultHandlerObject;
     TDefaultWrapperHandlerFunction wrapper_defaultHandler;
 
     const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
@@ -162,6 +161,6 @@ class CommandHandler {
     // in and out default strem
     Stream *inCmdStream;
     Stream *outCmdStream;
-  };
+};
 
 #endif //CommandHandler_h
