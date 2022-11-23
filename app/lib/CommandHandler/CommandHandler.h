@@ -27,11 +27,11 @@
 #define CommandHandler_h
 
 #if defined(WIRING) && WIRING >= 100
-#include <Wiring.h>
+  #include <Wiring.h>
 #elif defined(ARDUINO) && ARDUINO >= 100
-#include <Arduino.h>
+  #include <Arduino.h>
 #else
-#include <WProgram.h>
+  #include <WProgram.h>
 #endif
 #include <string.h>
 #include <deque>
@@ -57,6 +57,7 @@ typedef std::function<void(void)> TCmdHandlerFunction;
 typedef std::function<void(const char *, void *)> TRelayHandlerFunction;
 typedef std::function<void(const char *)> TDefaultHandlerFunction;
 typedef std::function<void(const char *, void *)> TDefaultWrapperHandlerFunction;
+
 
 class CommandHandler{
   public:
