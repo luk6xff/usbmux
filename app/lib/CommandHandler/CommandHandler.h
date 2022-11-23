@@ -122,8 +122,8 @@ class CommandHandler {
     struct CommandHandlerCallback {
       char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
       TCmdHandlerFunction function;
-    };                                  // Data structure to hold Command/Handler function key-value pairs
-    CommandHandlerCallback *commandList; // Actual definition for command/handler array
+    };                                    // Data structure to hold Command/Handler function key-value pairs
+    CommandHandlerCallback *commandList;   // Actual definition for command/handler array
     byte commandCount;
 
     // Relay/handler dictionary
