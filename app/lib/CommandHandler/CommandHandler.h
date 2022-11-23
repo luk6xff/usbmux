@@ -74,7 +74,7 @@ class CommandHandler {
     void processSerial();  // Process what on the in stream
     void processSerial(Stream &inStream);  // Process what on the designated stream
     void processString(const char *inString); // Process a String
-    void processChar(char inChar); // Process a char
+    void processChar(char inChar); //Process a char
     void clearBuffer();   // Clears the input buffer.
     char *remaining();         // Returns pointer to remaining of the command buffer (for getting arguments to commands).
     char *next();         // Returns pointer to next token found in command buffer (for getting arguments to commands).
@@ -112,18 +112,17 @@ class CommandHandler {
     char* getOutCmd(); // get pointer to command buffer
 
     void setOutCmdSerial(Stream &outStream); // define to which serial to send the out commands
-    void sendCmdSerial();                    // send current command thought the Stream
-    void sendCmdSerial(Stream &outStream);   // send current command thought the Stream
+    void sendCmdSerial(); //send current command thought the Stream
+    void sendCmdSerial(Stream &outStream); //send current command thought the Stream
 
   private:
     char buffer[COMMANDHANDLER_BUFFER + 1];
     char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data   
     // Command/handler dictionary
-    struct CommandHandlerCallback
-    {
+    struct CommandHandlerCallback {
       char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
       TCmdHandlerFunction function;
-    };                                   // Data structure to hold Command/Handler function key-value pairs
+    };                                  // Data structure to hold Command/Handler function key-value pairs
     CommandHandlerCallback *commandList; // Actual definition for command/handler array
     byte commandCount;
 
