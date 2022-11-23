@@ -1,6 +1,7 @@
 #include "serial-cmdhandler.h"
 #include "app-settings.h"
 #include "utils.h"
+
 //------------------------------------------------------------------------------
 #define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
@@ -8,13 +9,16 @@
 #define SERIAL_CMD_HANDLER_TERM3 '[A' // arrowup
 #define SERIAL_CMD_HANDLER_TERM4 '\b' // backspace
 #define SERIAL_CMD_HANDLER_TERM5 '[B' // arrowdown
+
+
 //------------------------------------------------------------------------------
 SerialCmdHandler::SerialCmdHandler(Commander &cmdr)
-    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_TERM3, SERIAL_CMD_HANDLER_TERM4, SERIAL_CMD_HANDLER_TERM5), m_cmdr(cmdr)
+    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_TERM3, SERIAL_CMD_HANDLER_TERM4, SERIAL_CMD_HANDLER_TERM5)
+    , m_cmdr(cmdr)
 {
     // Setup callbacks for SerialCommand commands
     setCommands();
-    for (auto &cmd : m_commands)
+    for (auto& cmd : m_commands)
     {
         addCommand(cmd.first.c_str(), cmd.second);
     }
