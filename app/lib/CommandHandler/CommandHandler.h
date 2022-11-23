@@ -158,6 +158,7 @@ class CommandHandler {
     String commandHeader; // header for out command
     byte commandDecimal;
 
+
     // in and out default strem
     Stream *inCmdStream;
     Stream *outCmdStream;

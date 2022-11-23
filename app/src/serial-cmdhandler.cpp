@@ -33,13 +33,14 @@ void SerialCmdHandler::process()
 void SerialCmdHandler::setCommands()
 {
     m_commands = SerialCmdMap{
-        {"h", std::bind(&SerialCmdHandler::cmdMenu, this)},
-        {"ch", std::bind(&SerialCmdHandler::processCmdUsbChannel, this)},
-        {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
-        {"wf", std::bind(&SerialCmdHandler::processCmdWifi, this)},
-        {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
-        {"r", std::bind(&SerialCmdHandler::processCmdReset, this)},
-        {"n", std::bind(&SerialCmdHandler::processCmdSetName, this)}};
+                            {"h", std::bind(&SerialCmdHandler::cmdMenu, this)},
+                            {"ch", std::bind(&SerialCmdHandler::processCmdUsbChannel, this)},
+                            {"pwr", std::bind(&SerialCmdHandler::processCmdPower, this)},
+                            {"wf", std::bind(&SerialCmdHandler::processCmdWifi, this)},
+                            {"inf", std::bind(&SerialCmdHandler::processCmdInfo, this)},
+                            {"r", std::bind(&SerialCmdHandler::processCmdReset, this)},
+                            {"n", std::bind(&SerialCmdHandler::processCmdSetName, this)}
+                            };
 }
 //------------------------------------------------------------------------------
 void SerialCmdHandler::processCmdRelayGetSate()

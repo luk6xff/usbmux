@@ -8,10 +8,10 @@ AppSettings::AppSettings()
 {
     // Modify according to your application
     defaultSettings =
-        {
-            .magic = 0x4C554B36, // LUK6
-            .version = 0x00000008,
-        };
+    {
+        .magic = 0x4C554B36,  // LUK6
+        .version = 0x00000008,
+    };
 
     WifiSettings wifiDefault;
     // Clear wifi default settings
@@ -20,7 +20,7 @@ AppSettings::AppSettings()
     memcpy(wifiDefault.ssid, "admin", strlen("admin"));
     memcpy(wifiDefault.pass, "admin", strlen("admin"));
     // Assign defaults
-
+    
     memset(&defaultSettings.name, 0, sizeof(defaultSettings.name));
     memcpy(&defaultSettings.name, "MUX_DEFAULT", strlen("MUX_DEFAULT"));
     defaultSettings.wifi0 = wifiDefault;
@@ -28,8 +28,9 @@ AppSettings::AppSettings()
     defaultSettings.wifi2 = wifiDefault;
 }
 
+
 //------------------------------------------------------------------------------
-AppSettings &AppSettings::instance()
+AppSettings&  AppSettings::instance()
 {
     static AppSettings settings;
     return settings;
@@ -47,7 +48,7 @@ void AppSettings::init()
     printCurrentSettings();
 
     // Check if settings are valid
-    if (getCurrent().magic == getDefaults().magic &&
+    if (getCurrent().magic == getDefaults().magic && \
         getCurrent().version == getDefaults().version)
     {
         dbg("APP_SETTINGS: Read eeprom settings look ok\r\n");
@@ -68,19 +69,20 @@ void AppSettings::init()
 }
 
 //------------------------------------------------------------------------------
-const AppSettings::Settings &AppSettings::getDefaults()
+const AppSettings::Settings& AppSettings::getDefaults()
 {
     return defaultSettings;
 }
 
 //------------------------------------------------------------------------------
-const AppSettings::Settings &AppSettings::getCurrent()
+const AppSettings::Settings& AppSettings::getCurrent()
 {
     return currentSettings;
 }
 
+
 //------------------------------------------------------------------------------
-bool AppSettings::storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettings &ws)
+bool AppSettings::storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettings& ws)
 {
     bool ret = true;
     Settings newSettings = getCurrent();
@@ -111,9 +113,9 @@ bool AppSettings::storeWifiData(uint8_t wifiSettingsNum, AppSettings::WifiSettin
 bool AppSettings::storeName(const String &name_)
 {
     bool ret = true;
-    const char *name = name_.c_str();
+    const char* name = name_.c_str();
     Settings newSettings = getCurrent();
-
+    
     memset(&newSettings.name, 0, sizeof(newSettings.name));
     memcpy(&newSettings.name, name, strlen(name));
     ret = saveSettings(newSettings);
@@ -139,7 +141,7 @@ bool AppSettings::saveSettings(const Settings &settings)
 //------------------------------------------------------------------------------
 void AppSettings::readSettings()
 {
-    currentSettings = EEPROM.get(0, currentSettings);
+   currentSettings = EEPROM.get(0, currentSettings);
 }
 
 //------------------------------------------------------------------------------
