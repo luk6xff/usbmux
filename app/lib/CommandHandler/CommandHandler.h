@@ -59,7 +59,7 @@ typedef std::function<void(const char *)> TDefaultHandlerFunction;
 typedef std::function<void(const char *, void *)> TDefaultWrapperHandlerFunction;
 
 
-class CommandHandler{
+class CommandHandler {
   public:
     bool new_command = true; // bool procesing if we used this command
     std::deque<char*> deque_t; // deque storing all previous commands
@@ -70,14 +70,14 @@ class CommandHandler{
     void setDefaultHandler(TDefaultHandlerFunction function);                                                                                                                    // A handler to call when no valid command received.
     void setDefaultHandler(TDefaultWrapperHandlerFunction function, void *pt2Object);                                                                                            // A handler to call when no valid command received.
 
-    void setInCmdSerial(Stream &inStream);    // define to which serial to send the read commands
-    void processSerial();                     // Process what on the in stream
-    void processSerial(Stream &inStream);     // Process what on the designated stream
+    void setInCmdSerial(Stream &inStream); // define to which serial to send the read commands
+    void processSerial();  // Process what on the in stream
+    void processSerial(Stream &inStream);  // Process what on the designated stream
     void processString(const char *inString); // Process a String
-    void processChar(char inChar);            // Process a char
-    void clearBuffer();                       // Clears the input buffer.
-    char *remaining();                        // Returns pointer to remaining of the command buffer (for getting arguments to commands).
-    char *next();                             // Returns pointer to next token found in command buffer (for getting arguments to commands).
+    void processChar(char inChar); // Process a char
+    void clearBuffer();   // Clears the input buffer.
+    char *remaining();         // Returns pointer to remaining of the command buffer (for getting arguments to commands).
+    char *next();         // Returns pointer to next token found in command buffer (for getting arguments to commands).
 
     // helpers to cast next into different types
     bool argOk; // this variable is set after the below function are run, it tell you if thing went well
@@ -89,9 +89,9 @@ class CommandHandler{
     char *readStringArg();
     bool compareCheckStringArg(const char *stringToCompare);
 
-    // helpers to create a message
+    //helpers to create a message
     void setCmdHeader(const char *cmdHeader, bool addDelim = true); // setting a char to be added at the start of each out message (default "")
-    void initCmd();                                                 // initialize the command buffer  to build next message to be sent
+    void initCmd(); // initialize the command buffer  to build next message to be sent
 
     void clearCmd(); // clear the output command
     void addCmdDelim();
@@ -109,7 +109,7 @@ class CommandHandler{
 
     void addCmdString(const char *value);
 
-    char *getOutCmd(); // get pointer to command buffer
+    char* getOutCmd(); // get pointer to command buffer
 
     void setOutCmdSerial(Stream &outStream); // define to which serial to send the out commands
     void sendCmdSerial();                    // send current command thought the Stream
