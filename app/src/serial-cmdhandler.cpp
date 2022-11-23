@@ -22,7 +22,7 @@ SerialCmdHandler::SerialCmdHandler(Commander& cmdr)
     {
         addCommand(cmd.first.c_str(), cmd.second);
     }
-    
+
     setDefaultHandler(std::bind(&SerialCmdHandler::processCmdUnrecognized, this));
     addCommand("st", std::bind(&SerialCmdHandler::processCmdRelayGetSate, this)); // adds new command st for relay state check
     cmdMenu();
