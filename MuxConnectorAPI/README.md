@@ -1,7 +1,7 @@
 
 # Mux Connector API
 
-Provides custom methodes for usbmux ([original repo](https://github.com/luk6xff/usbmux/tree/power_relays))
+Provides custom methodes for usbmux
 
 
 
