@@ -68,16 +68,14 @@ void SerialCmdHandler::cmdMenu(void)
     err("");
     err("\033[1;33m	Options:\033[1;39m");
     err("\033[1;33m h                    \033[0;37m	Print the help message\033[1;39m");
-    err("\033[1;33m pwr,id,[x,][r,(y)]   \033[0;37m	Set power relay state:\033[1;39m");
+    err("\033[1;33m pwr,id,[x,][r,(y)][g,]   \033[0;37m	Set power relay state:\033[1;39m");
     err("                          \033[0;37m	id-RelayID number(0,1,2...) \033[1;39m");
-    err("                          \033[0;37m	x-Off/On(0-1); r-reset; y-reset timeout value\033[1;39m");
+    err("                          \033[0;37m	x-Off/On(0-1); r-reset; y-reset timeout value; g-get_state\033[1;39m");
     err("\033[1;33m inf                  \033[0;37m	Print device information data\033[1;39m");
     err("\033[1;33m n,name               \033[0;37m	Change name of the USBMUX:\033[1;39m");
     err("                          \033[0;37m	name-new name string value presented in inf command\033[1;39m");
     err("                              \033[0;37m	-maximum 20 characters\033[1;39m");
     err("\033[1;33m r                    \033[0;37m	Reboot the device\033[1;39m");
-    err("\033[1;33m st,id   \033[0;37m	Checks power relay state:\033[1;39m");
-    err("                          \033[0;37m	id-RelayID number(0,1,2...) \033[1;39m");
     err("\033[1;36m	>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<< \033[1;39m	");
     err("\n");
 }
@@ -166,6 +164,12 @@ void SerialCmdHandler::processCmdPower()
         {
             inf("\033[1;31m No PowerRelay[id:%d] timeout argument applied \033[1;39m", relayId);
         }
+    }
+    else if (compareCheckStringArg("g"))
+    {
+        //Drop 'g' command
+        readStringArg();
+        msg.get_state = true;
     }
     else
     {

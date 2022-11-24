@@ -121,6 +121,19 @@ void CmdHandler::handle(CmdSetPwrRelayMsg& msg)
                 pwrRelay.enable(prevState);
                 inf("PwrRelay (id:%d) has been reset back to state: %d\r\n", msg.relayId, prevState);
             }
+            if (msg.get_state)
+            {
+                const PowerRelay::RelayState state = pwrRelay.state();
+                // Check relay state if 0 first message if 1 second
+                if (state==0)
+                {
+                    inf("PowerRelay (id:%d) state SET to: RELAY_OFF", msg.relayId);
+                }
+                else
+                {
+                    inf("PowerRelay (id:%d) state SET to: RELAY_ON", msg.relayId);
+                }  
+            }
             else
             {
                 pwrRelay.enable(msg.relayState);

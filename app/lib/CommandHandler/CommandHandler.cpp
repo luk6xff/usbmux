@@ -31,7 +31,7 @@
  * Example: SerialCommand sCmd(" ", '\n', '\r');
  * Default are COMMANDHANDLER_DEFAULT_DELIM and COMMANDHANDLER_DEFAULT_TERM
  */
-CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm2, char newterm3, char newterm4, char newterm5)
+CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm2, char newbufup, char newbufdwn, char newrmchr)
     : commandList(NULL),
       commandCount(0),
       relayList(NULL),
@@ -41,9 +41,9 @@ CommandHandler::CommandHandler(const char *newdelim, char newterm1, char newterm
       wrapper_defaultHandler(NULL),
       term1(newterm1), // asssign new terminator1 for commands
       term2(newterm2), // asssign new terminator2 for commands
-      term3(newterm3), // asssign new terminator3 for commands
-      term4(newterm4), // asssign new terminator4 for commands
-      term5(newterm5), // asssign new terminator5 for commands
+      bufup(newbufup), // asssign new buffer scroll up for commands
+      bufdwn(newbufdwn), // asssign new buffer scroll down for commands
+      rmchr(newrmchr), // asssign new backspace for commands
       last(NULL),
       delim(newdelim) // assign new delimitor
 {
@@ -171,7 +171,7 @@ void CommandHandler::processString(const char *inString)
  */
 void CommandHandler::processChar(char inChar)
 {
-  if (inChar == term5) // implementation o arrow down
+  if (inChar == bufup) // implementation o arrow down
   {
     deque_num--;         // changes deque index
     if (deque_num <= -1) // checks if deque index is too small
@@ -194,7 +194,7 @@ void CommandHandler::processChar(char inChar)
     }
     new_command = false; // it is previous command
   }
-  else if (inChar == term4 && bufPos > 0) // implementation of backspace (if bufPos <= 0 there is no need for backspace)
+  else if (inChar == rmchr && bufPos > 0) // implementation of backspace (if bufPos <= 0 there is no need for backspace)
   {
     Serial.print(inChar); // prints backspace
     Serial.print(" ");
@@ -203,7 +203,7 @@ void CommandHandler::processChar(char inChar)
     Serial.print("\b");
     new_command = true; // it can't be previous command - command is already changed
   }
-  else if (inChar == term3) // implementation o arrow down
+  else if (inChar == bufdwn) // implementation o arrow down
   {
     deque_num++; // changes deque index
     if (deque_num == deque_t.size()) // checks if deque index is too small

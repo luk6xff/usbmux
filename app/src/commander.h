@@ -126,14 +126,16 @@ public:
         : relayId(0)
         , relayState(PowerRelay::RelayState::RELAY_OFF)
         , reset(false)
+        , get_state(false)
         , resetTimeoutMs(k_defaultTimeoutMs)
     {
     }
 
-    CmdSetPwrRelayMsg(const uint8_t relayId, PowerRelay::RelayState state, bool reset=false, uint32_t resetTime=k_defaultTimeoutMs)
+    CmdSetPwrRelayMsg(const uint8_t relayId, PowerRelay::RelayState state, bool reset=false, bool get_state=false, uint32_t resetTime=k_defaultTimeoutMs)
         : relayId(relayId)
         , relayState(state)
         , reset(reset)
+        , get_state(get_state)
         , resetTimeoutMs(resetTime)
     {
     }
@@ -143,6 +145,7 @@ public:
     PowerRelay::RelayState relayState;
     bool reset;
     uint32_t resetTimeoutMs;
+    bool get_state;
 
     static int const k_defaultTimeoutMs = 1000;
 };
