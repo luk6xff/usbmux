@@ -24,7 +24,7 @@ DeviceInfo::DeviceInfo()
 //------------------------------------------------------------------------------
 String DeviceInfo::latest()
 {
-    String res = "\033[1;35m >>>>>>>>>>>>>>>>>>>> DeviceInfo <<<<<<<<<<<<<<<<<<<< \033[1;39m \r\n";
+    String res = "\033[1;35m >>>>>>>>>>>>>>>>>>>> DeviceInfo <<<<<<<<<<<<<<<<<<<< \033[1;39m\r\n";
     res += name.toValueString() + "\r\n"
             + buildAuthor.toValueString() + "\r\n"
             + buildDate.toValueString() + "\r\n"
