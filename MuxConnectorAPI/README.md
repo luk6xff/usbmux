@@ -19,7 +19,7 @@ directory. If you want to want to change it, you need to change path in 7th line
 ```sys.path.insert(0, './') ``` 
 
 It points to a directory that contains mux_finder.api
-## Quick example (check /Examples for better showcase)
+## Quick example (checkout /Examples for better showcase)
 
 ```javascript
 import sys
