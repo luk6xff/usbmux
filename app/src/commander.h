@@ -101,23 +101,6 @@ public:
     bool disableChannels;
 };
 //------------------------------------------------------------------------------
-class CmdGetPwrRelayMsg : public CommandMsgBase<CmdGetPwrRelayMsg>
-{
-public:
-    CmdGetPwrRelayMsg()
-        :  relayId(0) //relay id needed in relay message
-    {
-    }
-    CmdGetPwrRelayMsg(const uint8_t relayId)
-        : relayId(relayId)
-    {
-    }
-public:
-    uint8_t relayId;
-};
-
-
-//------------------------------------------------------------------------------
 class CmdSetPwrRelayMsg : public CommandMsgBase<CmdSetPwrRelayMsg>
 {
 

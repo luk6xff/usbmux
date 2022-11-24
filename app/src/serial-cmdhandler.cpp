@@ -6,14 +6,14 @@
 #define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
 #define SERIAL_CMD_HANDLER_TERM2 '\r' // CR
-#define SERIAL_CMD_HANDLER_TERM3 '[A' // arrowup
-#define SERIAL_CMD_HANDLER_TERM4 '\b' // backspace
-#define SERIAL_CMD_HANDLER_TERM5 '[B' // arrowdown
+#define SERIAL_CMD_HANDLER_BUFUP '[A' // arrowup
+#define SERIAL_CMD_HANDLER_BUFDWN '[B' // arrowdown
+#define SERIAL_CMD_HANDLER_RMCHR '\b' // backspace
 
 
 //------------------------------------------------------------------------------
 SerialCmdHandler::SerialCmdHandler(Commander& cmdr)
-    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_TERM3, SERIAL_CMD_HANDLER_TERM4, SERIAL_CMD_HANDLER_TERM5)
+    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_BUFUP, SERIAL_CMD_HANDLER_BUFDWN, SERIAL_CMD_HANDLER_RMCHR)
     , m_cmdr(cmdr)
 {
     // Setup callbacks for SerialCommand commands
@@ -24,7 +24,6 @@ SerialCmdHandler::SerialCmdHandler(Commander& cmdr)
     }
 
     setDefaultHandler(std::bind(&SerialCmdHandler::processCmdUnrecognized, this));
-    addCommand("st", std::bind(&SerialCmdHandler::processCmdRelayGetSate, this)); // adds new command st for relay state check
     cmdMenu();
 }
 
@@ -46,20 +45,6 @@ void SerialCmdHandler::setCommands()
                             {"r",   std::bind(&SerialCmdHandler::processCmdReset, this)},
                             {"n",   std::bind(&SerialCmdHandler::processCmdSetName, this)}
                             };
-}
-
-//------------------------------------------------------------------------------
-void SerialCmdHandler::processCmdRelayGetSate()
-{
-    CmdGetPwrRelayMsg msg; // declares message for handler
-    const uint8_t relayId = readIntArg(); // relay_id 
-    if (!argOk) // checks if there is any relay arguments
-    {
-        err("\033[1;31m No PowerRelayID applied! \033[1;39m");
-        return;
-    }
-    msg.relayId = relayId; 
-    m_cmdr.processCmdMsg(msg); // process relay message
 }
 //------------------------------------------------------------------------------
 void SerialCmdHandler::cmdMenu(void)

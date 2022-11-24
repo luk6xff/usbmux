@@ -58,37 +58,6 @@ void CmdHandler::handle(CmdSetUsbChannelMsg& msg)
     }
 }
 //------------------------------------------------------------------------------
-void CmdHandler::handle(CmdGetPwrRelayMsg& msg)
-{
-    if (!m_pwrRelays) // Check if m_pwrRelays has been created
-    {
-        err("PowerRelays object has not been created, exiting...");
-    }
-    else
-    {
-        // Check if ID is valid ?
-        if (msg.relayId >= m_pwrRelays->size())
-        {
-            err("PwrRelayId value must be between (0-%d) !!!\r\n", m_pwrRelays->size()-1);
-        }  
-        else
-        {
-            // Extract a PwrRelay reference.
-            auto& pwrRelay = (*m_pwrRelays)[msg.relayId];
-            const PowerRelay::RelayState m_state = pwrRelay.state();
-            // Check relay state if 0 first message if 1 second
-            if (m_state==0)
-            {
-                inf("PowerRelay (id:%d) state SET to: RELAY_OFF", msg.relayId);
-            }
-            else
-            {
-                inf("PowerRelay (id:%d) state SET to: RELAY_ON", msg.relayId);
-            }  
-        }
-    }
-}
-//------------------------------------------------------------------------------
 void CmdHandler::handle(CmdSetPwrRelayMsg& msg)
 {
     dbg("CmdSetPwrRelayMsg handler: %s\r\n", __func__);
@@ -125,14 +94,8 @@ void CmdHandler::handle(CmdSetPwrRelayMsg& msg)
             {
                 const PowerRelay::RelayState state = pwrRelay.state();
                 // Check relay state if 0 first message if 1 second
-                if (state==0)
-                {
-                    inf("PowerRelay (id:%d) state SET to: RELAY_OFF", msg.relayId);
-                }
-                else
-                {
-                    inf("PowerRelay (id:%d) state SET to: RELAY_ON", msg.relayId);
-                }  
+
+                inf("PowerRelay[id:%d] state SET to: %s\r\n", msg.relayId, state == 0 ? "RELAY_OFF" : "RELAY_ON");
             }
             else
             {
