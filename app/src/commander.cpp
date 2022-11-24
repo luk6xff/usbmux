@@ -57,7 +57,6 @@ void CmdHandler::handle(CmdSetUsbChannelMsg& msg)
         }
     }
 }
-
 //------------------------------------------------------------------------------
 void CmdHandler::handle(CmdSetPwrRelayMsg& msg)
 {
@@ -90,6 +89,13 @@ void CmdHandler::handle(CmdSetPwrRelayMsg& msg)
                 delay(msg.resetTimeoutMs);
                 pwrRelay.enable(prevState);
                 inf("PwrRelay (id:%d) has been reset back to state: %d\r\n", msg.relayId, prevState);
+            }
+            if (msg.get_state)
+            {
+                const PowerRelay::RelayState state = pwrRelay.state();
+                // Check relay state if 0 first message if 1 second
+
+                inf("PowerRelay[id:%d] state SET to: %s\r\n", msg.relayId, state == 0 ? "RELAY_OFF" : "RELAY_ON");
             }
             else
             {

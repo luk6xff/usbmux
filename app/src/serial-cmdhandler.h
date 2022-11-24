@@ -3,7 +3,7 @@
 #include <Arduino.h>
 
 #include <map>
-
+#include <vector>
 #include "CommandHandler.h"
 #include "commander.h"
 
@@ -23,6 +23,7 @@ private:
 
     void setCommands();
     void cmdMenu();
+    void bufScroll();
 
     void processCmdUsbChannel();
     void processCmdPower();
@@ -34,7 +35,6 @@ private:
 
 private:
     Commander& m_cmdr;
-
     SerialCmdMap m_commands;
 };
 

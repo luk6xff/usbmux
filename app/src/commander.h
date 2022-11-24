@@ -12,6 +12,7 @@
 
 ///< Forward declaration of Actual Command classes
 class CommandMsg;
+class CmdGetPwrRelayMsg;
 class CmdSetUsbChannelMsg;
 class CmdSetPwrRelayMsg;
 class CmdSetWifiConfigMsg;
@@ -27,6 +28,7 @@ class CmdHandler
 public:
     explicit CmdHandler();
     void handle(CmdSetUsbChannelMsg& msg);
+    void handle(CmdGetPwrRelayMsg& msg);
     void handle(CmdSetPwrRelayMsg& msg);
     void handle(CmdSetWifiConfigMsg& msg);
     void handle(CmdDeviceInfoMsg& msg);
@@ -98,8 +100,6 @@ public:
     UsbMuxDriver::UsbIdState usbIdState;
     bool disableChannels;
 };
-
-
 //------------------------------------------------------------------------------
 class CmdSetPwrRelayMsg : public CommandMsgBase<CmdSetPwrRelayMsg>
 {
@@ -109,14 +109,16 @@ public:
         : relayId(0)
         , relayState(PowerRelay::RelayState::RELAY_OFF)
         , reset(false)
+        , get_state(false)
         , resetTimeoutMs(k_defaultTimeoutMs)
     {
     }
 
-    CmdSetPwrRelayMsg(const uint8_t relayId, PowerRelay::RelayState state, bool reset=false, uint32_t resetTime=k_defaultTimeoutMs)
+    CmdSetPwrRelayMsg(const uint8_t relayId, PowerRelay::RelayState state, bool reset=false, bool get_state=false, uint32_t resetTime=k_defaultTimeoutMs)
         : relayId(relayId)
         , relayState(state)
         , reset(reset)
+        , get_state(get_state)
         , resetTimeoutMs(resetTime)
     {
     }
@@ -126,6 +128,7 @@ public:
     PowerRelay::RelayState relayState;
     bool reset;
     uint32_t resetTimeoutMs;
+    bool get_state;
 
     static int const k_defaultTimeoutMs = 1000;
 };
@@ -191,7 +194,7 @@ class Commander
 {
 
 public:
-
+    CmdHandler m_cmdHandler;
     /**
      * @brief Ctor
      */
@@ -203,5 +206,5 @@ private:
 
 
 private:
-    CmdHandler m_cmdHandler;
+
 };
