@@ -167,7 +167,7 @@ void SerialCmdHandler::processCmdPower()
             msg.relayState = (pwrRelayState == false) ? \
                             PowerRelay::RelayState::RELAY_OFF : \
                             PowerRelay::RelayState::RELAY_ON;
-            inf("PowerRelay[id:%d] state SET to: \r\n", relayId, pwrRelayState == false ? "RELAY_OFF" : "RELAY_ON");
+            inf("PowerRelay[id:%d] state SET to: %s\r\n", relayId, pwrRelayState == false ? "RELAY_OFF" : "RELAY_ON");
         }
         else
         {
