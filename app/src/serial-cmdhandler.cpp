@@ -214,7 +214,7 @@ void SerialCmdHandler::processCmdWifi()
         err("No WifiId argument applied");
         return;
     }
-    inf("\033[1;32m	 New Wifi AP data will be stored - channel:%d, ssid:, pass: \033[1;39m",
+    inf("	 New Wifi AP data will be stored - channel:%d, ssid:, pass: %s",
         msg.wifiId, msg.wifiSsid.c_str(), msg.wifiPass.c_str());
     m_cmdr.processCmdMsg(msg);
 }
@@ -235,7 +235,7 @@ void SerialCmdHandler::processCmdSetName()
     {
         name = name.substring(0,NAME_LEN);
     }
-    inf("Matched Name: ", name.c_str());
+    inf("Matched Name: %s", name.c_str());
     CmdDeviceSetNameMsg msg(name);
     m_cmdr.processCmdMsg(msg);
 }
