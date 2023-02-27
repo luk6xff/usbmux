@@ -34,6 +34,7 @@
   #include <WProgram.h>
 #endif
 #include <string.h>
+#include <deque>
 
 // Size of the input buffer in bytes (maximum length of one command plus arguments)
 #define COMMANDHANDLER_BUFFER 64
@@ -43,6 +44,9 @@
 #define COMMANDHANDLER_DEFAULT_DELIM ","
 #define COMMANDHANDLER_DEFAULT_TERM1 '\n'
 #define COMMANDHANDLER_DEFAULT_TERM2 '\r'
+#define COMMANDHANDLER_DEFAULT_BUFUP 'A'
+#define COMMANDHANDLER_DEFAULT_BUFDWN 'B'
+#define COMMANDHANDLER_DEFAULT_RMCHR '\b'
 // The null term for string
 #define STRING_NULL_TERM 0
 
@@ -57,11 +61,14 @@ typedef std::function<void(const char *, void *)> TDefaultWrapperHandlerFunction
 
 class CommandHandler {
   public:
-    CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm1 = COMMANDHANDLER_DEFAULT_TERM1, const char newterm2 = COMMANDHANDLER_DEFAULT_TERM2);   // Constructor
-    void addCommand(const char *command, TCmdHandlerFunction function);  // Add a command to the processing dictionary.
-    void addRelay(const char *command, TRelayHandlerFunction function, void* pt2Object = NULL);  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
-    void setDefaultHandler(TDefaultHandlerFunction function);   // A handler to call when no valid command received.
-    void setDefaultHandler(TDefaultWrapperHandlerFunction function, void* pt2Object);   // A handler to call when no valid command received.
+    bool new_command = true; // bool procesing if we used this command
+    std::deque<char*> deque_t; // deque storing all previous commands
+    int deque_num = 0; // deque index                                                                                                                           // Buffer of stored characters while waiting for terminator character
+    CommandHandler(const char *newdelim = COMMANDHANDLER_DEFAULT_DELIM, const char newterm1 = COMMANDHANDLER_DEFAULT_TERM1, const char newterm2 = COMMANDHANDLER_DEFAULT_TERM2, const char newbufup = COMMANDHANDLER_DEFAULT_BUFUP, const char newbufdwn = COMMANDHANDLER_DEFAULT_BUFDWN, const char newrmchr = COMMANDHANDLER_DEFAULT_RMCHR); // Constructor
+    void addCommand(const char *command, TCmdHandlerFunction function);                                                                                                          // Add a command to the processing dictionary.
+    void addRelay(const char *command, TRelayHandlerFunction function, void *pt2Object = NULL);                                                                                  // Add a command to the relay dictionary. Such relay are given the remaining of the command. pt2Object is the reference to the instance associated with the callback, it will be given as the second argument of the callback function, default is NULL
+    void setDefaultHandler(TDefaultHandlerFunction function);                                                                                                                    // A handler to call when no valid command received.
+    void setDefaultHandler(TDefaultWrapperHandlerFunction function, void *pt2Object);                                                                                            // A handler to call when no valid command received.
 
     void setInCmdSerial(Stream &inStream); // define to which serial to send the read commands
     void processSerial();  // Process what on the in stream
@@ -109,7 +116,8 @@ class CommandHandler {
     void sendCmdSerial(Stream &outStream); //send current command thought the Stream
 
   private:
-
+    char buffer[COMMANDHANDLER_BUFFER + 1];
+    char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data   
     // Command/handler dictionary
     struct CommandHandlerCallback {
       char command[COMMANDHANDLER_MAXCOMMANDLENGTH + 1];
@@ -135,11 +143,13 @@ class CommandHandler {
     const char *delim; // null-terminated list of character to be used as delimeters for tokenizing (default " ")
     char term1;        // Character that signals end of command (default '\n')
     char term2;        // Character that signals end of command (default '\r')
-    char buffer[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters while waiting for terminator character
-    byte bufPos;                        // Current position in the buffer
-    char *last;                         // State variable used by strtok_r during processing
+    char bufup;        // arrow up
+    char rmchr;        // backspace
+    char bufdwn;        // arrow down
 
-    char bufferTemp[COMMANDHANDLER_BUFFER + 1]; // Buffer copy, used for peeking data
+    byte bufPos; // Current position in the buffer
+    char *last;  // State variable used by strtok_r during processing
+
 
     char remains[COMMANDHANDLER_BUFFER + 1]; // Buffer of stored characters to pass to a relay function
 

@@ -6,11 +6,15 @@
 #define SERIAL_CMD_HANDLER_DELIM ","
 #define SERIAL_CMD_HANDLER_TERM1 '\n' // LF
 #define SERIAL_CMD_HANDLER_TERM2 '\r' // CR
+#define SERIAL_CMD_HANDLER_BUFUP 'A' // arrowup
+#define SERIAL_CMD_HANDLER_BUFDWN 'B' // arrowdown
+#define SERIAL_CMD_HANDLER_RMCHR '\b' // backspace
+
 
 
 //------------------------------------------------------------------------------
 SerialCmdHandler::SerialCmdHandler(Commander& cmdr)
-    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2)
+    : CommandHandler(SERIAL_CMD_HANDLER_DELIM, SERIAL_CMD_HANDLER_TERM1, SERIAL_CMD_HANDLER_TERM2, SERIAL_CMD_HANDLER_BUFUP, SERIAL_CMD_HANDLER_BUFDWN, SERIAL_CMD_HANDLER_RMCHR)
     , m_cmdr(cmdr)
 {
     // Setup callbacks for SerialCommand commands
@@ -43,23 +47,24 @@ void SerialCmdHandler::setCommands()
                             {"n",   std::bind(&SerialCmdHandler::processCmdSetName, this)}
                             };
 }
-
 //------------------------------------------------------------------------------
 void SerialCmdHandler::cmdMenu(void)
 {
-    err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
+    err(">>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<");
     err("");
     err("Options:");
-    err(" h                    Print the help message");
-    err(" pwr,id,[x,][r,(y)]   Set power relay state:");
-    err("                          id-RelayID number(0,1,2...) ");
-    err("                          x-Off/On(0-1); r-reset; y-reset timeout value");
-    err(" inf                  Print device information data");
-    err(" n,name               Change name of the USBMUX:");
-    err("                          name-new name string value presented in inf command");
-    err("                              -maximum 20 characters");
-    err(" r                    Reboot the device");
-    err(">>>>>>>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<<<<<<");
+    err(" h           Print the help message");
+    err(" pwr,id,[x,][r,(y)][g,]   	Set power relay state:");
+    err("                      id-RelayID number(0,1,2...)");
+    err("                      x-Off/On(0-1); r-reset; y-reset timeout value");
+    err("                      g-get_state");
+    err(" inf          Print device information data");
+    err(" n,name       Change name of the USBMUX:");
+    err("                      name:");
+    err("                        -new name string value presented in inf command");
+    err("                        -maximum 20 characters");
+    err(" r            Reboot the device");
+    err(">>>>>>>>>>>>>>> USBMUX(POWER-RELAYS) by luk6xff (2022) <<<<<<<<<<<<<<<");
     err("\n");
 }
 
@@ -106,6 +111,7 @@ void SerialCmdHandler::processCmdUsbChannel()
         }
     }
 
+
     m_cmdr.processCmdMsg(msg);
 }
 
@@ -144,9 +150,14 @@ void SerialCmdHandler::processCmdPower()
         }
         else
         {
-            inf("No PowerRelay[id:%d] timeout argument applied", relayId);
+            err("No timeout argument applied");
         }
-
+    }
+    else if (compareCheckStringArg("g"))
+    {
+        //Drop 'g' command
+        readStringArg();
+        msg.get_state = true;
     }
     else
     {
@@ -160,7 +171,7 @@ void SerialCmdHandler::processCmdPower()
         }
         else
         {
-            wrn("No PowerRelay argument applied");
+            err("No PowerRelay argument applied");
             return;
         }
     }
@@ -203,7 +214,7 @@ void SerialCmdHandler::processCmdWifi()
         err("No WifiId argument applied");
         return;
     }
-    inf("New Wifi AP data will be stored - channel:%d, ssid:%s, pass:%s",
+    inf("	 New Wifi AP data will be stored - channel:%d, ssid:, pass: %s",
         msg.wifiId, msg.wifiSsid.c_str(), msg.wifiPass.c_str());
     m_cmdr.processCmdMsg(msg);
 }
@@ -241,6 +252,5 @@ void SerialCmdHandler::processCmdUnrecognized()
 {
     wrn("Non recognized USBMUX command");
 }
-
 
 //------------------------------------------------------------------------------
